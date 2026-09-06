@@ -82,23 +82,39 @@ export const characterService = {
       );
   },
 
-  async createSubAttribute(parentId: string, name: string, displayOrder: number): Promise<Attribute | null> {
-    const parent = await this.getAttributeById(parentId);
-    if (!parent) return null;
+async createSubAttribute(
+  parentId: string,
+  name: string,
+  displayOrder: number
+): Promise<Attribute | null> {
+  const parent = await this.getAttributeById(parentId);
+  if (!parent) return null;
 
-    const { data } = await supabase
-      .from('attributes')
-      .insert({
-        category_id: parent.category_id,
-        name,
-        parent_id: parentId,
-        display_order: displayOrder,
-      })
-      .select()
-      .maybeSingle();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-    return data;
-  },
+  if (userError) throw userError;
+  if (!user) throw new Error('Usuário não autenticado');
+
+  const { data, error } = await supabase
+    .from('attributes')
+    .insert({
+      user_id: user.id,
+      category_id: parent.category_id,
+      name: name.trim(),
+      parent_id: parentId,
+      display_order: displayOrder,
+    })
+    .select()
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return data;
+},
+
 
   async getAttributeById(id: string): Promise<Attribute | null> {
     const { data } = await supabase
