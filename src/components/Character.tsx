@@ -666,13 +666,24 @@ function NewSubAttributeModal({
           >
             Cancelar
           </button>
-          <button
-            onClick={() => name.trim() && onConfirm(name.trim())}
-            disabled={!name.trim()}
-            className="flex-1 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold transition-colors disabled:opacity-50"
-          >
-            Criar
-          </button>
+<button
+  type="button"
+  onClick={() => {
+    console.log('BOTÃO CRIAR CLICADO');
+    console.log('NAME:', name);
+
+    if (!name.trim()) {
+      alert('O nome está vazio!');
+      return;
+    }
+
+    console.log('CHAMANDO onConfirm');
+    onConfirm(name.trim());
+  }}
+  className="flex-1 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold"
+>
+  Criar
+</button>
         </div>
       </div>
     </div>
