@@ -50,20 +50,27 @@ export const characterService = {
 
     type AttributeNode = Attribute & { children: AttributeNode[]; value: number };
 
-    const buildAttributeTree = (parentId: string | null): AttributeNode[] => {
-      return (attributesData || [])
-        .filter(a => a.parent_id === parentId)
-        .map(attr => ({
-          ...attr,
-          children: buildAttributeTree(attr.id),
-          value: charAttrsMap.get(attr.id) || 0,
-        }));
-    };
+    const buildAttributeTree = (
+  parentId: string | null,
+  categoryId: string
+): AttributeNode[] => {
+  return (attributesData || [])
+    .filter(
+      a =>
+        a.parent_id === parentId &&
+        a.category_id === categoryId
+    )
+    .map(attr => ({
+      ...attr,
+      children: buildAttributeTree(attr.id, categoryId),
+      value: charAttrsMap.get(attr.id) || 0,
+    }));
+};
 
     return (categoriesData || []).map(cat => ({
-      ...cat,
-      attributes: buildAttributeTree(null),
-    }));
+  ...cat,
+  attributes: buildAttributeTree(null, cat.id),
+}));
   },
 
   async updateAttributeValue(characterId: string, attributeId: string, value: number): Promise<void> {
@@ -139,12 +146,13 @@ export const characterService = {
   },
 
   async updateAttributeName(id: string, name: string): Promise<void> {
-    const { error } = await supabase
-      .from('attributes')
-      .update({ name, updated_at: new Date().toISOString() })
-      .eq('id', id);
-    if (error) throw error;
-  },
+  const { error } = await supabase
+    .from('attributes')
+    .update({ name })
+    .eq('id', id);
+
+  if (error) throw error;
+},
 
   async reorderAttribute(id: string, newDisplayOrder: number): Promise<void> {
     const { error } = await supabase
