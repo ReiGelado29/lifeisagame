@@ -132,15 +132,45 @@ export function CharacterSection({ characterId, onBack, onUpdateCharacter }: Cha
     }
   };
 
-  const createSubAttribute = async (parentId: string, categoryId: string, name: string, level: number) => {
-    if (level >= MAX_TREE_DEPTH) return;
+const createSubAttribute = async (
+  parentId: string,
+  categoryId: string,
+  name: string,
+  level: number
+) => {
+  if (level >= MAX_TREE_DEPTH) return;
+
+  try {
     const count = await characterService.getAttributeCount(parentId);
-    const newAttr = await characterService.createSubAttribute(parentId, name, count + 1);
-    if (newAttr) {
-      await characterService.updateAttributeValue(characterId, newAttr.id, 0);
-      await loadData();
+
+    const newAttr = await characterService.createSubAttribute(
+      parentId,
+      name.trim(),
+      count + 1
+    );
+
+    if (!newAttr) {
+      throw new Error('Não foi possível criar o atributo.');
     }
-  };
+
+    await characterService.updateAttributeValue(
+      characterId,
+      newAttr.id,
+      0
+    );
+
+    setNewSubAttributeModal(null);
+    await loadData();
+  } catch (error) {
+    console.error('Erro ao criar sub-atributo:', error);
+
+    alert(
+      'Erro ao criar atributo: ' +
+      (error instanceof Error ? error.message : 'Erro desconhecido')
+    );
+  }
+};
+
 
   const deleteAttribute = async (attributeId: string) => {
     try {
@@ -555,10 +585,15 @@ export function CharacterSection({ characterId, onBack, onUpdateCharacter }: Cha
           parentName={newSubAttributeModal.parent.name}
           level={newSubAttributeModal.level}
           maxLevel={MAX_TREE_DEPTH}
-          onConfirm={async (name) => {
-            await createSubAttribute(newSubAttributeModal.parent.id, newSubAttributeModal.categoryId, name, newSubAttributeModal.level);
-            setNewSubAttributeModal(null);
-          }}
+         
+onConfirm={async (name) => {
+  await createSubAttribute(
+    newSubAttributeModal.parent.id,
+    newSubAttributeModal.categoryId,
+    name,
+    newSubAttributeModal.level
+  );
+}}
           onClose={() => setNewSubAttributeModal(null)}
         />
       )}
