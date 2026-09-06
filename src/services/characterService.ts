@@ -157,7 +157,9 @@ export const characterService = {
   async reorderAttribute(id: string, newDisplayOrder: number): Promise<void> {
     const { error } = await supabase
       .from('attributes')
-      .update({ display_order: newDisplayOrder, updated_at: new Date().toISOString() })
+      .update({
+    display_order: newDisplayOrder
+})
       .eq('id', id);
     if (error) throw error;
   },
