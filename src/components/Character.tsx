@@ -133,6 +133,39 @@ export function CharacterSection({ characterId, onBack, onUpdateCharacter }: Cha
     }
   };
 
+    const createCategory = async (name: string) => {
+    if (!name.trim()) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const displayOrder = categories.length + 1;
+
+      const newCategory = await categoryService.createCategory(
+        user.id,
+        name.trim(),
+        displayOrder
+      );
+
+      if (!newCategory) {
+        throw new Error('Não foi possível criar a categoria.');
+      }
+
+      setNewCategoryModal(false);
+      await loadData();
+    } catch (error) {
+      console.error('Erro ao criar categoria:', error);
+      alert(
+        'Erro ao criar categoria: ' +
+        (error instanceof Error ? error.message : 'Erro desconhecido')
+      );
+    }
+  };
+
 const createSubAttribute = async (
   parentId: string,
   categoryId: string,
