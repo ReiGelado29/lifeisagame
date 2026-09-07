@@ -1,4 +1,3 @@
-```sql
 /*
   # User-owned Attribute Categories and Attributes
 
@@ -266,4 +265,3 @@ CREATE TRIGGER update_attributes_updated_at
   BEFORE UPDATE ON attributes
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-```
