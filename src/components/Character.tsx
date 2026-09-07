@@ -609,14 +609,24 @@ const createSubAttribute = async (
               )}
 
               {expandedCategories[category.id] && (
-                <div className="p-4 space-y-2">
-                  {category.attributes.length === 0 ? (
-                    <p className="text-slate-400 text-center py-4">Nenhum atributo</p>
-                  ) : (
-                    category.attributes.map(attr => renderAttribute(attr, category.id))
-                  )}
-                </div>
-              )}
+  <div className="p-4 space-y-2">
+    <button
+      onClick={() => setNewAttributeModal({ categoryId: category.id })}
+      className="w-full flex items-center justify-center gap-2 p-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-lg text-emerald-400 font-semibold transition-colors"
+    >
+      <Plus className="w-4 h-4" />
+      Novo atributo
+    </button>
+
+    {category.attributes.length === 0 ? (
+      <p className="text-slate-400 text-center py-4">
+        Nenhum atributo
+      </p>
+    ) : (
+      category.attributes.map(attr => renderAttribute(attr, category.id))
+    )}
+  </div>
+)}
             </div>
           ))}
         </div>
