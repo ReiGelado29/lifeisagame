@@ -1,4 +1,3 @@
-```ts
 import { supabase } from '../lib/supabase';
 import type { AttributeCategory } from '../types';
 
@@ -96,4 +95,3 @@ export const categoryService = {
     if (error) throw error;
   },
 };
-```
