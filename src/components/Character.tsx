@@ -553,7 +553,15 @@ const createSubAttribute = async (
         )}
 
         <div className="space-y-4">
-          {categories.map((category) => (
+  <button
+    onClick={() => setNewCategoryModal(true)}
+    className="w-full flex items-center justify-center gap-2 p-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-xl text-blue-400 font-semibold transition-colors"
+  >
+    <Plus className="w-5 h-5" />
+    Nova categoria
+  </button>
+
+  {categories.map((category) => (
             <div key={category.id} className="bg-slate-800/50 backdrop-blur rounded-2xl border border-slate-700/50 overflow-hidden">
               {editingCategory?.id === category.id ? (
                 <div className="p-4 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 flex gap-2">
