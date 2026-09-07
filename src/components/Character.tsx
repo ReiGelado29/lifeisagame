@@ -35,6 +35,7 @@ export function CharacterSection({ characterId, onBack, onUpdateCharacter }: Cha
   const [expandedAttributes, setExpandedAttributes] = useState<Record<string, boolean>>({});
   const [editingAttribute, setEditingAttribute] = useState<EditingAttribute | null>(null);
   const [editingCategory, setEditingCategory] = useState<EditingCategory | null>(null);
+  const [newCategoryModal, setNewCategoryModal] = useState(false);
   const [newSubAttributeModal, setNewSubAttributeModal] = useState<{ parent: Attribute; categoryId: string; level: number } | null>(null);
   const [showXpModal, setShowXpModal] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
