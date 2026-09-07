@@ -82,6 +82,36 @@ export const characterService = {
       );
   },
 
+    async createAttribute(
+    categoryId: string,
+    name: string,
+    displayOrder: number
+  ): Promise<Attribute | null> {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError) throw userError;
+    if (!user) throw new Error('Usuário não autenticado');
+
+    const { data, error } = await supabase
+      .from('attributes')
+      .insert({
+        user_id: user.id,
+        category_id: categoryId,
+        name: name.trim(),
+        parent_id: null,
+        display_order: displayOrder,
+      })
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+
+    return data;
+  },
+  
 async createSubAttribute(
   parentId: string,
   name: string,
