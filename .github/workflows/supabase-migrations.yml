@@ -1,6 +1,6 @@
 name: Deploy Supabase Migrations
 
-on:
+'on':
   workflow_dispatch:
 
 jobs:
