@@ -1,4 +1,5 @@
 export { characterService } from './characterService';
+export { categoryService } from './categoryService';
 export { progressService } from './progressService';
 export { missionService } from './missionService';
 export { inventoryService } from './inventoryService';
