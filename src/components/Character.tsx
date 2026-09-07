@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, Plus, ChevronDown, ChevronRight, Trash2, Edit2, X, History, TrendingUp, TrendingDown, GripVertical, Check } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Character, CategoryWithAttributes, AttributeWithChildren, Attribute, XpHistory } from '../types';
-import { characterService, xpHistoryService } from '../services';
+import { characterService, categoryService, xpHistoryService } from '../services';
 import { MAX_TREE_DEPTH } from '../constants';
 import { formatDateTime } from '../utils';
 
