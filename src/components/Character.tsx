@@ -677,6 +677,12 @@ const createSubAttribute = async (
     onClose={() => setNewCategoryModal(false)}
   />
 )}
+      {newAttributeModal && (
+  <NewAttributeModal
+    onConfirm={(name) => createAttribute(newAttributeModal.categoryId, name)}
+    onClose={() => setNewAttributeModal(null)}
+  />
+)}
       {newSubAttributeModal && (
         <NewSubAttributeModal
           parentName={newSubAttributeModal.parent.name}
