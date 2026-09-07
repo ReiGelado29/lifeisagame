@@ -167,6 +167,44 @@ export function CharacterSection({ characterId, onBack, onUpdateCharacter }: Cha
     }
   };
 
+  const createAttribute = async (categoryId: string, name: string) => {
+  if (!name.trim()) return;
+
+  try {
+    if (!character) {
+      throw new Error('Personagem não encontrado');
+    }
+
+    const category = categories.find(c => c.id === categoryId);
+    const displayOrder = (category?.attributes.length || 0) + 1;
+
+    const newAttribute = await characterService.createAttribute(
+      categoryId,
+      name.trim(),
+      displayOrder
+    );
+
+    if (!newAttribute) {
+      throw new Error('Não foi possível criar o atributo.');
+    }
+
+    await characterService.updateAttributeValue(
+      character.id,
+      newAttribute.id,
+      0
+    );
+
+    setNewAttributeModal(null);
+    await loadData();
+  } catch (error) {
+    console.error('Erro ao criar atributo:', error);
+    alert(
+      'Erro ao criar atributo: ' +
+      (error instanceof Error ? error.message : 'Erro desconhecido')
+    );
+  }
+};
+  
 const createSubAttribute = async (
   parentId: string,
   categoryId: string,
