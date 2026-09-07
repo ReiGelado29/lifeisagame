@@ -1,4 +1,3 @@
-```sql
 -- ============================================================
 -- 006 - Garantir que atributos pertençam ao mesmo usuário
 -- que suas categorias e atributos-pai
@@ -70,4 +69,3 @@ ON public.attributes(user_id, category_id);
 
 CREATE INDEX IF NOT EXISTS idx_attributes_user_parent
 ON public.attributes(user_id, parent_id);
-```
