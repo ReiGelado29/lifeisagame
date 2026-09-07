@@ -116,14 +116,20 @@ async createSubAttribute(
 },
 
 
-  async getAttributeById(id: string): Promise<Attribute | null> {
-    const { data } = await supabase
-      .from('attributes')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle();
-    return data;
-  },
+async getAttributeById(id: string): Promise<Attribute | null> {
+  const { data, error } = await supabase
+    .from('attributes')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Erro ao buscar atributo:', error);
+    throw error;
+  }
+
+  return data;
+},
 
   async deleteAttribute(id: string): Promise<void> {
     try {
