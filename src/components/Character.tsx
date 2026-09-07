@@ -779,6 +779,59 @@ function NewCategoryModal({
   );
 }
 
+function NewAttributeModal({
+  onConfirm,
+  onClose,
+}: {
+  onConfirm: (name: string) => void;
+  onClose: () => void;
+}) {
+  const [name, setName] = useState('');
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-slate-800 rounded-2xl p-6 max-w-md w-full">
+        <h3 className="text-xl font-bold text-white mb-4">
+          Novo Atributo
+        </h3>
+
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Nome do atributo"
+          className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          autoFocus
+        />
+
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 py-2 bg-slate-600 hover:bg-slate-500 rounded-lg text-white font-semibold transition-colors"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (!name.trim()) {
+                alert('Digite o nome do atributo.');
+                return;
+              }
+
+              onConfirm(name.trim());
+            }}
+            className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg text-white font-semibold transition-colors"
+          >
+            Criar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function NewSubAttributeModal({
   parentName,
   level,
