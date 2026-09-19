@@ -167,6 +167,26 @@ export function CharacterSection({ characterId, onBack, onUpdateCharacter }: Cha
     }
   };
 
+  const deleteCategory = async (categoryId: string) => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error('Usuário não autenticado');
+    }
+
+    await categoryService.deleteCategory(categoryId, user.id);
+
+    await loadData();
+  } catch (error) {
+    console.error('Erro ao excluir categoria:', error);
+    alert(
+      'Erro ao excluir categoria: ' +
+      (error instanceof Error ? error.message : 'Erro desconhecido')
+    );
+  }
+};
+  
   const createAttribute = async (categoryId: string, name: string) => {
   if (!name.trim()) return;
 
