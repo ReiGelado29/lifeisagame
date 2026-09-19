@@ -661,8 +661,27 @@ const createSubAttribute = async (
                       setEditingCategory({ id: category.id, name: category.name });
                     }}
                     className="text-slate-400 hover:text-blue-400 transition-colors opacity-0 group-hover:opacity-100"
+                    title="Editar nome"
                   >
                     <Edit2 className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+
+                      if (
+                        confirm(
+                          `Tem certeza que deseja excluir a categoria "${category.name}"?`
+                        )
+                      ) {
+                        deleteCategory(category.id);
+                      }
+                    }}
+                    className="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                    title="Excluir categoria"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </button>
               )}
