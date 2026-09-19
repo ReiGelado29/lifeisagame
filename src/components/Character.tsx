@@ -424,13 +424,21 @@ const createSubAttribute = async (
               </button>
             )}
 
-            <button
-              onClick={() => deleteAttribute(attr.id)}
-              className="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
-              title="Deletar"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+<button
+  onClick={() => {
+    if (
+      window.confirm(
+        `Tem certeza que deseja excluir o atributo "${attr.name}"?`
+      )
+    ) {
+      deleteAttribute(attr.id);
+    }
+  }}
+  className="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+  title="Deletar"
+>
+  <Trash2 className="w-4 h-4" />
+</button>
           </div>
         )}
 
