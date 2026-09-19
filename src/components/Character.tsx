@@ -670,13 +670,13 @@ const createSubAttribute = async (
                     onClick={(e) => {
                       e.stopPropagation();
 
-                      if (
-                        confirm(
-                          `Tem certeza que deseja excluir a categoria "${category.name}"?`
-                        )
-                      ) {
-                        deleteCategory(category.id);
-                      }
+if (
+  window.confirm(
+    `Tem certeza que deseja excluir a categoria "${category.name}"?`
+  )
+) {
+  deleteCategory(category.id);
+}
                     }}
                     className="text-slate-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
                     title="Excluir categoria"
