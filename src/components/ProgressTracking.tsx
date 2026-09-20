@@ -429,6 +429,19 @@ function BehaviorEditorModal({
   onSave: () => void;
   onClose: () => void;
 }) {
+    const [numericValues, setNumericValues] = useState<Record<string, string>>(() => ({
+    mental_energy: String(formData.mental_energy),
+    stable_dopamine: String(formData.stable_dopamine),
+    focus: String(formData.focus),
+    stress: String(formData.stress),
+    emotional_stability: String(formData.emotional_stability),
+    fatigue: String(formData.fatigue),
+    cognitive_overload: String(formData.cognitive_overload),
+    sleep_influence: String(formData.sleep_influence),
+    xp_reward: String(formData.xp_reward),
+    default_duration_minutes: String(formData.default_duration_minutes),
+  }));
+  
   const statFields: { key: keyof BehaviorFormData; label: string; type: 'positive' | 'negative' }[] = [
     { key: 'mental_energy', label: 'Energia Mental', type: 'positive' },
     { key: 'stable_dopamine', label: 'Dopamina Estável', type: 'positive' },
@@ -464,8 +477,20 @@ function BehaviorEditorModal({
                 <label className="block text-sm font-medium text-slate-300 mb-2">{label}</label>
                 <input
                   type="number"
-                  value={formData[key] as number}
-                  onChange={(e) => onChange({ ...formData, [key]: parseInt(e.target.value) || 0 })}
+value={numericValues[key]}
+onChange={(e) => {
+  const value = e.target.value;
+
+  setNumericValues({
+    ...numericValues,
+    [key]: value,
+  });
+
+  onChange({
+    ...formData,
+    [key]: value === '' ? 0 : Number(value),
+  });
+}}
                   className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -477,7 +502,20 @@ function BehaviorEditorModal({
               <label className="block text-sm font-medium text-slate-300 mb-2">XP Recompensa</label>
               <input
                 type="number"
-                value={formData.xp_reward}
+             value={numericValues.xp_reward}
+onChange={(e) => {
+  const value = e.target.value;
+
+  setNumericValues({
+    ...numericValues,
+    xp_reward: value,
+  });
+
+  onChange({
+    ...formData,
+    xp_reward: value === '' ? 0 : Number(value),
+  });
+}}   value={formData.xp_reward}
                 onChange={(e) => onChange({ ...formData, xp_reward: parseInt(e.target.value) || 0 })}
                 className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 min="0"
@@ -488,8 +526,20 @@ function BehaviorEditorModal({
               <label className="block text-sm font-medium text-slate-300 mb-2">Duração Padrão (min)</label>
               <input
                 type="number"
-                value={formData.default_duration_minutes}
-                onChange={(e) => onChange({ ...formData, default_duration_minutes: parseInt(e.target.value) || 30 })}
+value={numericValues.default_duration_minutes}
+onChange={(e) => {
+  const value = e.target.value;
+
+  setNumericValues({
+    ...numericValues,
+    default_duration_minutes: value,
+  });
+
+  onChange({
+    ...formData,
+    default_duration_minutes: value === '' ? 0 : Number(value),
+  });
+}}
                 className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 min="1"
               />
