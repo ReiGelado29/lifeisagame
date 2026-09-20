@@ -150,28 +150,32 @@ export const missionService = {
       .update({ is_completed: newCompleteState, updated_at: new Date().toISOString() })
       .eq('id', step.id);
 
-    if (newCompleteState && step.xp_reward > 0) {
-      const { data: mission } = await supabase
-        .from('missions')
-        .select('character_id')
-        .eq('id', step.mission_id)
-        .maybeSingle();
+if (step.xp_reward > 0) {
+  const { data: mission } = await supabase
+    .from('missions')
+    .select('character_id')
+    .eq('id', step.mission_id)
+    .maybeSingle();
 
-      if (mission) {
-        const { data: charData } = await supabase
-          .from('characters')
-          .select('xp')
-          .eq('id', mission.character_id)
-          .maybeSingle();
+  if (mission) {
+    const { data: charData } = await supabase
+      .from('characters')
+      .select('xp')
+      .eq('id', mission.character_id)
+      .maybeSingle();
 
-        if (charData) {
-          await supabase
-            .from('characters')
-            .update({ xp: charData.xp + step.xp_reward })
-            .eq('id', mission.character_id);
-        }
-      }
+    if (charData) {
+      const xpChange = newCompleteState
+        ? step.xp_reward
+        : -step.xp_reward;
+
+      await supabase
+        .from('characters')
+        .update({ xp: charData.xp + xpChange })
+        .eq('id', mission.character_id);
     }
+  }
+}
   },
 
   async deleteStep(id: string): Promise<void> {
