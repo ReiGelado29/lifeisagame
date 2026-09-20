@@ -59,7 +59,7 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
     description: string;
     xp_reward: number;
     deadline: string | null;
-    urgency: string;
+    urgency: MissionUrgency;
   }) => {
     await missionService.createMission(characterId, data);
     await loadMissions();
