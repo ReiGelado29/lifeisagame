@@ -276,12 +276,20 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
               </button>
 
               <button
-                onClick={() => deleteStep(step.id)}
-                className="text-slate-400 hover:text-red-400 transition-colors"
-                title="Deletar"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
+  onClick={() => {
+    if (
+      window.confirm(
+        `Tem certeza que deseja excluir a etapa "${step.title}"?`
+      )
+    ) {
+      deleteStep(step.id);
+    }
+  }}
+  className="text-slate-400 hover:text-red-400 transition-colors"
+  title="Excluir etapa"
+>
+  <Trash2 className="w-4 h-4" />
+</button>
             </div>
           </div>
         )}
