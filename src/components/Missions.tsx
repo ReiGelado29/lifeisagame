@@ -428,9 +428,9 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
                       className="text-slate-400 hover:text-red-400 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </button>
+</button>
+</div>
+</div>
 
                 {expandedMissions[mission.id] && (
                   <div className="p-4 border-t border-slate-700/50">
