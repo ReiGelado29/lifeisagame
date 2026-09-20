@@ -47,10 +47,10 @@ export const xpHistoryService = {
     return history;
   },
 
-  async deleteXpHistoryEntry(characterId: string, entryId: string): Promise<void> {
+async deleteXpHistoryEntry(characterId: string, entryId: string): Promise<void> {
   const { data: entry } = await supabase
     .from('xp_history')
-    .select('amount')
+    .select('amount, created_at')
     .eq('id', entryId)
     .eq('character_id', characterId)
     .maybeSingle();
@@ -69,6 +69,24 @@ export const xpHistoryService = {
     .from('characters')
     .update({ xp: charData.xp - entry.amount })
     .eq('id', characterId);
+
+  const { data: laterEntries } = await supabase
+    .from('xp_history')
+    .select('id, balance_after')
+    .eq('character_id', characterId)
+    .gt('created_at', entry.created_at);
+
+  if (laterEntries) {
+    for (const laterEntry of laterEntries) {
+      await supabase
+        .from('xp_history')
+        .update({
+          balance_after: laterEntry.balance_after - entry.amount,
+        })
+        .eq('id', laterEntry.id)
+        .eq('character_id', characterId);
+    }
+  }
 
   await supabase
     .from('xp_history')
