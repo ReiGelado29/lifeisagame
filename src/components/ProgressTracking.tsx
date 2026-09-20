@@ -102,7 +102,14 @@ export function ProgressTracking({ characterId, onBack }: ProgressTrackingProps)
 const deleteActivity = async (activityId: string) => {
   if (!todayLog) return;
 
+  const activity = todayActivities.find(a => a.id === activityId);
+  if (!activity) return;
+
   await progressService.deleteActivity(activityId);
+
+  if (activity.behavior.xp_reward > 0) {
+    await characterService.addXp(characterId, -activity.behavior.xp_reward);
+  }
 
   const remainingActivities = await progressService.getDailyActivities(todayLog.id);
   const recalculatedState = calculateMentalStateFromActivities(remainingActivities);
