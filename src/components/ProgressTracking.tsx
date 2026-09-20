@@ -233,62 +233,50 @@ export function ProgressTracking({ characterId, onBack }: ProgressTrackingProps)
             </div>
 
             <div className="space-y-2 max-h-[500px] overflow-y-auto">
-              {behaviors.map((behavior) => (
-                <div key={behavior.id} className="group">
-                  {editingBehavior === behavior.id ? (
-                    <div className="p-3 bg-slate-700/50 rounded-lg border border-blue-500/50 space-y-2">
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={behavior.name}
-                          placeholder="Nome"
-                          className="flex-1 px-2 py-1 bg-slate-600 border border-slate-500 rounded text-white text-sm"
-                          readOnly
-                        />
-                        <span className="text-xs text-slate-400 px-2 py-1">XP: {behavior.xp_reward}</span>
-                        <span className="text-xs text-slate-400 px-2 py-1">⏱: {behavior.default_duration_minutes || 30}min</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white font-medium truncate">{behavior.name}</p>
-                        <p className="text-xs text-slate-400">XP: {behavior.xp_reward} • ⏱: {behavior.default_duration_minutes || 30}min</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setBehaviorForm({
-                              name: behavior.name,
-                              mental_energy: behavior.mental_energy,
-                              stable_dopamine: behavior.stable_dopamine,
-                              focus: behavior.focus,
-                              stress: behavior.stress,
-                              emotional_stability: behavior.emotional_stability,
-                              fatigue: behavior.fatigue,
-                              cognitive_overload: behavior.cognitive_overload,
-                              sleep_influence: behavior.sleep_influence || 0,
-                              xp_reward: behavior.xp_reward,
-                              default_duration_minutes: behavior.default_duration_minutes || 30,
-                              description: behavior.description || '',
-                            });
-                            setShowBehaviorModal({ isOpen: true, behavior });
-                          }}
-                          className="text-slate-400 hover:text-white transition-colors text-sm"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => deleteBehavior(behavior.id)}
-                          className="text-slate-400 hover:text-red-400 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+             {behaviors.map((behavior) => (
+  <div key={behavior.id} className="group">
+    <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors">
+      <div className="flex-1 min-w-0">
+        <p className="text-white font-medium truncate">{behavior.name}</p>
+        <p className="text-xs text-slate-400">
+          XP: {behavior.xp_reward} • ⏱: {behavior.default_duration_minutes || 30}min
+        </p>
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          onClick={() => {
+            setBehaviorForm({
+              name: behavior.name,
+              mental_energy: behavior.mental_energy,
+              stable_dopamine: behavior.stable_dopamine,
+              focus: behavior.focus,
+              stress: behavior.stress,
+              emotional_stability: behavior.emotional_stability,
+              fatigue: behavior.fatigue,
+              cognitive_overload: behavior.cognitive_overload,
+              sleep_influence: behavior.sleep_influence || 0,
+              xp_reward: behavior.xp_reward,
+              default_duration_minutes: behavior.default_duration_minutes || 30,
+              description: behavior.description || '',
+            });
+            setShowBehaviorModal({ isOpen: true, behavior });
+          }}
+          className="text-slate-400 hover:text-white transition-colors text-sm"
+        >
+          <Edit2 className="w-4 h-4" />
+        </button>
+
+        <button
+          onClick={() => deleteBehavior(behavior.id)}
+          className="text-slate-400 hover:text-red-400 transition-colors"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  </div>
+))}
             </div>
           </div>
         </div>
