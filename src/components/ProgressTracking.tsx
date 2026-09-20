@@ -248,14 +248,14 @@ export function ProgressTracking({ characterId, onBack }: ProgressTrackingProps)
                           readOnly
                         />
                         <span className="text-xs text-slate-400 px-2 py-1">XP: {behavior.xp_reward}</span>
-                        <span className="text-xs text-slate-400 px-2 py-1">⏱: {(behavior as any).default_duration_minutes || 30}min</span>
+                        <span className="text-xs text-slate-400 px-2 py-1">⏱: {behavior.default_duration_minutes || 30}min</span>
                       </div>
                     </div>
                   ) : (
                     <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors">
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-medium truncate">{behavior.name}</p>
-                        <p className="text-xs text-slate-400">XP: {behavior.xp_reward} • ⏱: {(behavior as any).default_duration_minutes || 30}min</p>
+                        <p className="text-xs text-slate-400">XP: {behavior.xp_reward} • ⏱: {behavior.default_duration_minutes || 30}min</p>
                       </div>
                       <div className="flex gap-2">
                         <button
@@ -271,7 +271,7 @@ export function ProgressTracking({ characterId, onBack }: ProgressTrackingProps)
                               cognitive_overload: behavior.cognitive_overload,
                               sleep_influence: (behavior as any).sleep_influence || 0,
                               xp_reward: behavior.xp_reward,
-                              default_duration_minutes: (behavior as any).default_duration_minutes || 30,
+                              default_duration_minutes: behavior.default_duration_minutes || 30,
                               description: behavior.description || '',
                             });
                             setShowBehaviorModal({ isOpen: true, behavior });
@@ -358,7 +358,7 @@ function AddActivityModal({
               key={behavior.id}
               onClick={() => {
                 setSelectedBehavior(behavior.id);
-                setDuration((behavior as any).default_duration_minutes || 30);
+                setDuration(behavior.default_duration_minutes || 30);
               }}
               className={`w-full text-left p-3 rounded-lg transition-colors ${
                 selectedBehavior === behavior.id
@@ -368,7 +368,7 @@ function AddActivityModal({
             >
               <p className="text-white font-medium">{behavior.name}</p>
               <p className="text-xs text-slate-400">{behavior.description || 'Sem descrição'}</p>
-              <p className="text-xs text-slate-500 mt-1">Duração padrão: {(behavior as any).default_duration_minutes || 30}min</p>
+              <p className="text-xs text-slate-500 mt-1">Duração padrão: {behavior.default_duration_minutes || 30}min</p>
             </button>
           ))}
         </div>
