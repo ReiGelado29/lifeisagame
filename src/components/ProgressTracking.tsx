@@ -500,26 +500,25 @@ onChange={(e) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">XP Recompensa</label>
-              <input
-                type="number"
-             value={numericValues.xp_reward}
-onChange={(e) => {
-  const value = e.target.value;
+<input
+  type="number"
+  value={numericValues.xp_reward}
+  onChange={(e) => {
+    const value = e.target.value;
 
-  setNumericValues({
-    ...numericValues,
-    xp_reward: value,
-  });
+    setNumericValues({
+      ...numericValues,
+      xp_reward: value,
+    });
 
-  onChange({
-    ...formData,
-    xp_reward: value === '' ? 0 : Number(value),
-  });
-}}   value={formData.xp_reward}
-                onChange={(e) => onChange({ ...formData, xp_reward: parseInt(e.target.value) || 0 })}
-                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                min="0"
-              />
+    onChange({
+      ...formData,
+      xp_reward: value === '' ? 0 : Number(value),
+    });
+  }}
+  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+  min="0"
+/>
             </div>
 
             <div>
