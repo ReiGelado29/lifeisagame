@@ -114,7 +114,6 @@ export function ProgressTracking({ characterId, onBack }: ProgressTrackingProps)
 
     setShowBehaviorModal({ isOpen: false, behavior: null });
     setBehaviorForm(defaultBehaviorForm);
-    setEditingBehavior(null);
     await loadData();
   };
 
