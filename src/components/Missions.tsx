@@ -363,10 +363,10 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
                   }
                 }}
               >
-                <button
-                  onClick={() => setExpandedMissions(prev => ({ ...prev, [mission.id]: !prev[mission.id] }))}
-                  className="w-full flex items-center gap-4 p-4 bg-gradient-to-r from-orange-500/10 to-red-500/10 hover:from-orange-500/20 hover:to-red-500/20 transition-colors"
-                >
+               <div
+  onClick={() => setExpandedMissions(prev => ({ ...prev, [mission.id]: !prev[mission.id] }))}
+  className="w-full flex items-center gap-4 p-4 bg-gradient-to-r from-orange-500/10 to-red-500/10 hover:from-orange-500/20 hover:to-red-500/20 transition-colors cursor-pointer"
+>
                   <div className="text-slate-500 group-hover:text-slate-400 transition-colors opacity-0 group-hover:opacity-100">
                     <GripVertical className="w-4 h-4" />
                   </div>
