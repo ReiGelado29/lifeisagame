@@ -12,14 +12,20 @@ export const progressService = {
     return data || [];
   },
 
-  async createBehavior(behavior: Omit<Behavior, 'id' | 'created_at'>): Promise<Behavior | null> {
-    const { data } = await supabase
-      .from('behaviors')
-      .insert(behavior)
-      .select()
-      .maybeSingle();
-    return data;
-  },
+async createBehavior(behavior: Omit<Behavior, 'id' | 'created_at'>): Promise<Behavior | null> {
+  const { data, error } = await supabase
+    .from('behaviors')
+    .insert(behavior)
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    console.error('Erro ao criar comportamento:', error);
+    throw error;
+  }
+
+  return data;
+},
 
   async updateBehavior(id: string, updates: Partial<Behavior>): Promise<void> {
     await supabase.from('behaviors').update(updates).eq('id', id);
