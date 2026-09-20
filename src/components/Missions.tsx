@@ -23,7 +23,7 @@ interface EditingMission {
   description: string;
   xpReward: string;
   deadline: string;
-  urgency: string;
+  urgency: MissionUrgency;
 }
 
 export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
