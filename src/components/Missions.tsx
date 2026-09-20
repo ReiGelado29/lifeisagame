@@ -421,13 +421,21 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteMission(mission.id);
-                      }}
-                      className="text-slate-400 hover:text-red-400 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
+  onClick={(e) => {
+    e.stopPropagation();
+
+    if (
+      window.confirm(
+        `Tem certeza que deseja excluir a missão "${mission.title}"?`
+      )
+    ) {
+      deleteMission(mission.id);
+    }
+  }}
+  className="text-slate-400 hover:text-red-400 transition-colors"
+  title="Excluir missão"
+>
+  <Trash2 className="w-4 h-4" />
 </button>
 </div>
 </div>
