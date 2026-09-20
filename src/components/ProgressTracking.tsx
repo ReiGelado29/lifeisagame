@@ -124,24 +124,26 @@ const deleteActivity = async (activityId: string) => {
   setTodayActivities(remainingActivities);
 };
 
-  const saveBehavior = async () => {
-    if (!behaviorForm.name.trim()) return;
+const saveBehavior = async () => {
+  console.log('SALVAR CLICADO', behaviorForm);
 
-    const behaviorData = {
-      ...behaviorForm,
-      description: behaviorForm.description || null,
-    };
+  if (!behaviorForm.name.trim()) return;
 
-    if (showBehaviorModal.behavior) {
-      await progressService.updateBehavior(showBehaviorModal.behavior.id, behaviorData);
-    } else {
-      await progressService.createBehavior(behaviorData);
-    }
-
-    setShowBehaviorModal({ isOpen: false, behavior: null });
-    setBehaviorForm(defaultBehaviorForm);
-    await loadData();
+  const behaviorData = {
+    ...behaviorForm,
+    description: behaviorForm.description || null,
   };
+
+  if (showBehaviorModal.behavior) {
+    await progressService.updateBehavior(showBehaviorModal.behavior.id, behaviorData);
+  } else {
+    await progressService.createBehavior(behaviorData);
+  }
+
+  setShowBehaviorModal({ isOpen: false, behavior: null });
+  setBehaviorForm(defaultBehaviorForm);
+  await loadData();
+};
 
   const deleteBehavior = async (behaviorId: string) => {
     await progressService.deleteBehavior(behaviorId);
