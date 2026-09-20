@@ -269,7 +269,7 @@ export function ProgressTracking({ characterId, onBack }: ProgressTrackingProps)
                               emotional_stability: behavior.emotional_stability,
                               fatigue: behavior.fatigue,
                               cognitive_overload: behavior.cognitive_overload,
-                              sleep_influence: (behavior as any).sleep_influence || 0,
+                              sleep_influence: behavior.sleep_influence || 0,
                               xp_reward: behavior.xp_reward,
                               default_duration_minutes: behavior.default_duration_minutes || 30,
                               description: behavior.description || '',
