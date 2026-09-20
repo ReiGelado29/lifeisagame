@@ -44,7 +44,9 @@ export interface Behavior {
   emotional_stability: number;
   fatigue: number;
   cognitive_overload: number;
+  sleep_influence: number;
   xp_reward: number;
+  default_duration_minutes: number;
   description: string | null;
   created_at: string;
 }
