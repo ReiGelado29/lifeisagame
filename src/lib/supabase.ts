@@ -6,6 +6,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 console.log('Supabase URL existe:', !!supabaseUrl);
 console.log('Supabase Key existe:', !!supabaseAnonKey);
 
+console.log('Tamanho da Supabase Key:', supabaseAnonKey?.length);
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export type Database = {
