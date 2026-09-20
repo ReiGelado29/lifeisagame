@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Trash2, Clock, Droplets, Coffee, Moon, Activity, AlertCircle, Edit2, Save, X } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Clock, Droplets, Coffee, Moon, Activity, AlertCircle, Edit2 } from 'lucide-react';
 import type { Behavior, DailyLog, DailyActivityWithBehavior } from '../types';
 import { progressService, characterService } from '../services';
 import { getDiagnosticLabel, getDiagnosticColor, getDiagnosticBg, type StatType } from '../engine';
