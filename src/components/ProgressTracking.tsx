@@ -93,10 +93,23 @@ export function ProgressTracking({ characterId, onBack }: ProgressTrackingProps)
     setShowAddActivity(false);
   };
 
-  const deleteActivity = async (activityId: string) => {
-    await progressService.deleteActivity(activityId);
-    await loadData();
-  };
+const deleteActivity = async (activityId: string) => {
+  if (!todayLog) return;
+
+  await progressService.deleteActivity(activityId);
+
+  const remainingActivities = await progressService.getDailyActivities(todayLog.id);
+  const recalculatedState = calculateMentalStateFromActivities(remainingActivities);
+
+  await progressService.updateDailyLog(todayLog.id, recalculatedState);
+
+  setTodayLog({
+    ...todayLog,
+    ...recalculatedState,
+  });
+
+  setTodayActivities(remainingActivities);
+};
 
   const saveBehavior = async () => {
     if (!behaviorForm.name.trim()) return;
