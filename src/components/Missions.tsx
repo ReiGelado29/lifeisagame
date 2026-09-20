@@ -482,7 +482,7 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
                 xp_reward: data.xp_reward,
                 deadline: data.deadline || null,
                 urgency: data.urgency,
-              } as any);
+              });
             } else {
               await createMission(data);
             }
