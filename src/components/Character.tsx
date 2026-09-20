@@ -278,19 +278,15 @@ const createSubAttribute = async (
     }
   };
 
-  const deleteXpHistoryEntry = async (entryId: string) => {
-    try {
-      console.log('Deleting XP history entry:', entryId);
-      const { error } = await supabase.from('xp_history').delete().eq('id', entryId);
-      if (error) throw error;
-      console.log('Entry deleted, reloading...');
-      await loadData();
-      console.log('Data reloaded after entry delete');
-    } catch (error) {
-      console.error('Failed to delete XP history entry:', error);
-      alert('Erro ao deletar entrada: ' + (error as Error).message);
-    }
-  };
+ const deleteXpHistoryEntry = async (entryId: string) => {
+  try {
+    await xpHistoryService.deleteXpHistoryEntry(characterId, entryId);
+    await loadData();
+  } catch (error) {
+    console.error('Failed to delete XP history entry:', error);
+    alert('Erro ao deletar entrada: ' + (error as Error).message);
+  }
+};
 
   const handleDragStart = (e: React.DragEvent, attributeId: string) => {
     setDraggedAttributeId(attributeId);
