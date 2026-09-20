@@ -47,6 +47,36 @@ export const xpHistoryService = {
     return history;
   },
 
+  async deleteXpHistoryEntry(characterId: string, entryId: string): Promise<void> {
+  const { data: entry } = await supabase
+    .from('xp_history')
+    .select('amount')
+    .eq('id', entryId)
+    .eq('character_id', characterId)
+    .maybeSingle();
+
+  if (!entry) return;
+
+  const { data: charData } = await supabase
+    .from('characters')
+    .select('xp')
+    .eq('id', characterId)
+    .maybeSingle();
+
+  if (!charData) return;
+
+  await supabase
+    .from('characters')
+    .update({ xp: charData.xp - entry.amount })
+    .eq('id', characterId);
+
+  await supabase
+    .from('xp_history')
+    .delete()
+    .eq('id', entryId)
+    .eq('character_id', characterId);
+},
+  
   async getTotalXp(characterId: string): Promise<number> {
     const { data: charData } = await supabase
       .from('characters')
