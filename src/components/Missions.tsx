@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, ChevronDown, ChevronRight, Trash2, Edit2, Check, Calendar, Flag, Save, X, GripVertical } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { ArrowLeft, Plus, ChevronDown, ChevronRight, Trash2, Edit2, Check, Calendar, Flag, X, GripVertical } from 'lucide-react';
 import type { Mission, MissionStep, MissionWithSteps, MissionStepWithChildren, MissionUrgency } from '../types';
 import { missionService } from '../services';
 import { URGENCY_CONFIG, MAX_TREE_DEPTH } from '../constants';
