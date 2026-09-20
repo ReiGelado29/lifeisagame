@@ -47,7 +47,6 @@ export function ProgressTracking({ characterId, onBack }: ProgressTrackingProps)
   const [showBehaviorModal, setShowBehaviorModal] = useState<{ isOpen: boolean; behavior: Behavior | null }>({ isOpen: false, behavior: null });
   const [behaviorForm, setBehaviorForm] = useState<BehaviorFormData>(defaultBehaviorForm);
   const [showAddActivity, setShowAddActivity] = useState(false);
-  const [editingBehavior, setEditingBehavior] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
