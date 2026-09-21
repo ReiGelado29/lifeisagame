@@ -13,9 +13,18 @@ export const progressService = {
   },
 
 async createBehavior(behavior: Omit<Behavior, 'id' | 'created_at'>): Promise<Behavior | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('Usuário não autenticado.');
+  }
+
   const { data, error } = await supabase
     .from('behaviors')
-    .insert(behavior)
+    .insert({
+      ...behavior,
+      user_id: user.id,
+    })
     .select()
     .maybeSingle();
 
