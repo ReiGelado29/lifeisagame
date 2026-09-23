@@ -202,7 +202,19 @@ const saveBehavior = async () => {
             {renderStatBar('Estabilidade Emocional', todayLog.emotional_stability, 'positive', <Activity className="w-4 h-4" />)}
             {renderStatBar('Fadiga', todayLog.fatigue, 'negative', <Moon className="w-4 h-4" />)}
             {renderStatBar('Sobrecarga Cognitiva', todayLog.cognitive_overload, 'negative', <Coffee className="w-4 h-4" />)}
-            {renderStatBar('Sono (horas)', todayLog.sleep_hours, 'positive', <Moon className="w-4 h-4" />)}
+
+<div className="p-4 rounded-xl border border-slate-700 bg-slate-800/50">
+  <div className="flex items-center gap-2 mb-2">
+    <Moon className="w-4 h-4 text-slate-300" />
+    <span className="text-sm text-slate-300">Sono</span>
+    <span className="ml-auto font-bold text-white">
+      {todayLog.sleep_hours}h
+    </span>
+  </div>
+  <p className="text-xs text-slate-400 mt-2">
+    Horas de sono registradas
+  </p>
+</div>
           </div>
         )}
 
