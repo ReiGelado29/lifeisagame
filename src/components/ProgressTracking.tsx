@@ -124,6 +124,19 @@ const deleteActivity = async (activityId: string) => {
   setTodayActivities(remainingActivities);
 };
 
+  const saveSleepHours = async (sleepHours: number) => {
+  if (!todayLog) return;
+
+  await progressService.updateDailyLog(todayLog.id, {
+    sleep_hours: sleepHours,
+  });
+
+  setTodayLog({
+    ...todayLog,
+    sleep_hours: sleepHours,
+  });
+};
+
 const saveBehavior = async () => {
   console.log('SALVAR CLICADO', behaviorForm);
 
