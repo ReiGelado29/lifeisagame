@@ -224,9 +224,28 @@ const saveBehavior = async () => {
       {todayLog.sleep_hours}h
     </span>
   </div>
-  <p className="text-xs text-slate-400 mt-2">
+
+  <p className="text-xs text-slate-400 mt-2 mb-3">
     Horas de sono registradas
   </p>
+
+  <div className="flex items-center gap-2">
+    <input
+      type="number"
+      min="0"
+      max="24"
+      step="0.5"
+      value={todayLog.sleep_hours}
+      onChange={(e) => {
+        const value = Number(e.target.value);
+        if (value >= 0 && value <= 24) {
+          saveSleepHours(value);
+        }
+      }}
+      className="w-24 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white"
+    />
+    <span className="text-sm text-slate-400">horas</span>
+  </div>
 </div>
           </div>
         )}
