@@ -189,17 +189,115 @@ if (step.xp_reward > 0) {
       .eq('id', id);
   },
 
-  async reorderMission(id: string, newDisplayOrder: number): Promise<void> {
-    await supabase
-      .from('missions')
-      .update({ display_order: newDisplayOrder, updated_at: new Date().toISOString() })
-      .eq('id', id);
-  },
+async reorderMission(id: string, targetId: string): Promise<void> {
+  const { data: dragged, error: draggedError } = await supabase
+    .from('missions')
+    .select('id, character_id')
+    .eq('id', id)
+    .single();
 
-  async reorderStep(id: string, newDisplayOrder: number): Promise<void> {
-    await supabase
+  if (draggedError) throw draggedError;
+
+  const { data: target, error: targetError } = await supabase
+    .from('missions')
+    .select('id, character_id')
+    .eq('id', targetId)
+    .single();
+
+  if (targetError) throw targetError;
+  if (dragged.character_id !== target.character_id) return;
+
+  const { data: siblings, error: siblingsError } = await supabase
+    .from('missions')
+    .select('id, display_order')
+    .eq('character_id', dragged.character_id)
+    .order('display_order', { ascending: true });
+
+  if (siblingsError) throw siblingsError;
+  if (!siblings) return;
+
+  const reordered = siblings.filter(item => item.id !== id);
+  const targetIndex = reordered.findIndex(item => item.id === targetId);
+
+  if (targetIndex === -1) return;
+
+  reordered.splice(targetIndex, 0, {
+    id,
+    display_order: 0,
+  });
+
+  for (let i = 0; i < reordered.length; i++) {
+    const { error } = await supabase
+      .from('missions')
+      .update({
+        display_order: i + 1,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', reordered[i].id);
+
+    if (error) throw error;
+  }
+},
+
+async reorderStep(id: string, targetId: string): Promise<void> {
+  const { data: dragged, error: draggedError } = await supabase
+    .from('mission_steps')
+    .select('id, mission_id, parent_step_id')
+    .eq('id', id)
+    .single();
+
+  if (draggedError) throw draggedError;
+
+  const { data: target, error: targetError } = await supabase
+    .from('mission_steps')
+    .select('id, mission_id, parent_step_id')
+    .eq('id', targetId)
+    .single();
+
+  if (targetError) throw targetError;
+
+  if (
+    dragged.mission_id !== target.mission_id ||
+    dragged.parent_step_id !== target.parent_step_id
+  ) {
+    return;
+  }
+
+  let query = supabase
+    .from('mission_steps')
+    .select('id, display_order')
+    .eq('mission_id', dragged.mission_id);
+
+  query = dragged.parent_step_id === null
+    ? query.is('parent_step_id', null)
+    : query.eq('parent_step_id', dragged.parent_step_id);
+
+  const { data: siblings, error: siblingsError } = await query
+    .order('display_order', { ascending: true });
+
+  if (siblingsError) throw siblingsError;
+  if (!siblings) return;
+
+  const reordered = siblings.filter(item => item.id !== id);
+  const targetIndex = reordered.findIndex(item => item.id === targetId);
+
+  if (targetIndex === -1) return;
+
+  reordered.splice(targetIndex, 0, {
+    id,
+    display_order: 0,
+  });
+
+  for (let i = 0; i < reordered.length; i++) {
+    const { error } = await supabase
       .from('mission_steps')
-      .update({ display_order: newDisplayOrder, updated_at: new Date().toISOString() })
-      .eq('id', id);
-  },
+      .update({
+        display_order: i + 1,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', reordered[i].id);
+
+    if (error) throw error;
+  }
+},
 };
