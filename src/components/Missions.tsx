@@ -100,6 +100,7 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
     await loadMissions();
   };
 
+
 const reorderStep = async (
   stepId: string,
   targetStepId: string,
@@ -122,21 +123,6 @@ const reorderStep = async (
   }
 };
 
-  const reorderStep = async (stepId: string, targetStepId: string, missionId: string) => {
-    const mission = missions.find(m => m.id === missionId);
-    if (!mission) return;
-
-    const draggedStep = findStepInTree(mission.steps, stepId);
-    const targetStep = findStepInTree(mission.steps, targetStepId);
-
-    if (draggedStep && targetStep && draggedStep.parent_step_id === targetStep.parent_step_id) {
-      const tempOrder = draggedStep.display_order;
-      await missionService.reorderStep(stepId, targetStep.display_order);
-      await missionService.reorderStep(targetStepId, tempOrder);
-      setDraggedStepId(null);
-      await loadMissions();
-    }
-  };
 
   const getUrgencyStyle = (urgency: MissionUrgency) => {
     const config = URGENCY_CONFIG[urgency];
