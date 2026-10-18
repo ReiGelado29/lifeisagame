@@ -52,7 +52,8 @@ export const missionService = {
       .from('missions')
       .select('*')
       .eq('character_id', characterId)
-      .order('created_at', { ascending: false });
+.order('display_order', { ascending: true })
+.order('created_at', { ascending: true });
 
     if (!missionsData || missionsData.length === 0) return [];
 
