@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import type { TouchEvent } from 'react';
 import { ArrowLeft, Plus, ChevronDown, ChevronRight, Trash2, Edit2, Check, Calendar, Flag, X, GripVertical } from 'lucide-react';
 import type { Mission, MissionStep, MissionWithSteps, MissionStepWithChildren, MissionUrgency } from '../types';
 import { missionService } from '../services';
@@ -193,6 +194,108 @@ const updateDropTarget = (
 
   setDropTargetMissionId(missionId);
   setDropPosition(position);
+};
+
+  
+const handleMissionTouchStart = (
+  e: React.TouchEvent<HTMLDivElement>,
+  missionId: string
+) => {
+  const touch = e.touches[0];
+
+  touchDragRef.current = {
+    missionId,
+    startY: touch.clientY,
+    currentY: touch.clientY,
+  };
+
+  touchDragStartedRef.current = false;
+};
+
+const handleMissionTouchMove = (
+  e: React.TouchEvent<HTMLDivElement>
+) => {
+  const touch = e.touches[0];
+  const drag = touchDragRef.current;
+
+  if (!drag) return;
+
+  const deltaY = Math.abs(touch.clientY - drag.startY);
+
+  if (!touchDragStartedRef.current && deltaY > 10) {
+    touchDragStartedRef.current = true;
+    setDraggedMissionId(drag.missionId);
+  }
+
+  if (!touchDragStartedRef.current) return;
+
+  e.preventDefault();
+  drag.currentY = touch.clientY;
+
+  const cards = Object.entries(missionCardRefs.current);
+  let nearestCard: HTMLDivElement | null = null;
+  let nearestId: string | null = null;
+  let nearestDistance = Infinity;
+
+  for (const [id, card] of cards) {
+    if (!card || id === drag.missionId) continue;
+
+    const rect = card.getBoundingClientRect();
+
+    if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+      nearestCard = card;
+      nearestId = id;
+      break;
+    }
+
+    const distance = Math.min(
+      Math.abs(touch.clientY - rect.top),
+      Math.abs(touch.clientY - rect.bottom)
+    );
+
+    if (distance < nearestDistance) {
+      nearestDistance = distance;
+      nearestCard = card;
+      nearestId = id;
+    }
+  }
+
+  if (nearestCard && nearestId) {
+    updateDropTarget(nearestId, touch.clientY, nearestCard);
+  }
+
+  const edgeSize = 100;
+  const viewportHeight = window.innerHeight;
+
+  let scrollAmount = 0;
+
+  if (touch.clientY < edgeSize) {
+    scrollAmount = -Math.ceil((edgeSize - touch.clientY) / 5);
+  } else if (touch.clientY > viewportHeight - edgeSize) {
+    scrollAmount = Math.ceil(
+      (touch.clientY - (viewportHeight - edgeSize)) / 5
+    );
+  }
+
+  if (scrollAmount !== 0) {
+    window.scrollBy(0, scrollAmount);
+  }
+};
+
+const handleMissionTouchEnd = async () => {
+  const drag = touchDragRef.current;
+  const wasDragging = touchDragStartedRef.current;
+  const targetId = dropTargetMissionId;
+  const position = dropPosition;
+
+  if (wasDragging && drag && targetId && position) {
+    await reorderMission(drag.missionId, targetId, position);
+  } else {
+    finishMissionDrag();
+  }
+
+  touchDragRef.current = null;
+  touchDragStartedRef.current = false;
 };
 
 const reorderStep = async (
