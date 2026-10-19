@@ -150,7 +150,32 @@ const reorderMission = async (
     alert('Não foi possível salvar a nova ordem das missões. Tente novamente.');
   }
 };
+  
+const finishMissionDrag = () => {
+  touchDragRef.current = null;
+  setDraggedMissionId(null);
+  setDropTargetMissionId(null);
+  setDropPosition(null);
 
+  if (autoScrollRef.current !== null) {
+    cancelAnimationFrame(autoScrollRef.current);
+    autoScrollRef.current = null;
+  }
+};
+
+const updateDropTarget = (
+  missionId: string,
+  clientY: number,
+  element: HTMLElement
+) => {
+  const rect = element.getBoundingClientRect();
+  const position = clientY < rect.top + rect.height / 2
+    ? 'before'
+    : 'after';
+
+  setDropTargetMissionId(missionId);
+  setDropPosition(position);
+};
 
 const reorderStep = async (
   stepId: string,
