@@ -47,6 +47,8 @@ const touchDragRef = useRef<{
 } | null>(null);
 
 const autoScrollRef = useRef<number | null>(null);
+const touchDragStartedRef = useRef(false);
+const missionCardRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
     loadMissions();
