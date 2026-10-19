@@ -100,6 +100,18 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
     await loadMissions();
   };
 
+  
+const reorderMission = async (
+  missionId: string,
+  targetMissionId: string
+) => {
+  if (missionId === targetMissionId) return;
+
+  await missionService.reorderMission(missionId, targetMissionId);
+  setDraggedMissionId(null);
+  await loadMissions();
+};
+
 
 const reorderStep = async (
   stepId: string,
