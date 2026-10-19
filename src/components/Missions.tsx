@@ -37,6 +37,16 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
   const [showStepModal, setShowStepModal] = useState<{ missionId: string; parentStepId: string | null; level: number } | null>(null);
   const [draggedMissionId, setDraggedMissionId] = useState<string | null>(null);
   const [draggedStepId, setDraggedStepId] = useState<string | null>(null);
+  const [dropTargetMissionId, setDropTargetMissionId] = useState<string | null>(null);
+const [dropPosition, setDropPosition] = useState<'before' | 'after' | null>(null);
+
+const touchDragRef = useRef<{
+  missionId: string;
+  startY: number;
+  currentY: number;
+} | null>(null);
+
+const autoScrollRef = useRef<number | null>(null);
 
   useEffect(() => {
     loadMissions();
