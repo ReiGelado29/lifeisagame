@@ -190,7 +190,11 @@ if (step.xp_reward > 0) {
       .eq('id', id);
   },
 
-async reorderMission(id: string, targetId: string): Promise<void> {
+async reorderMission(
+  id: string,
+  targetId: string,
+  position: 'before' | 'after' = 'before'
+): Promise<void> {
   const { data: dragged, error: draggedError } = await supabase
     .from('missions')
     .select('id, character_id')
@@ -219,14 +223,19 @@ async reorderMission(id: string, targetId: string): Promise<void> {
   if (!siblings) return;
 
   const reordered = siblings.filter(item => item.id !== id);
-  const targetIndex = reordered.findIndex(item => item.id === targetId);
+const targetIndex = reordered.findIndex(item => item.id === targetId);
 
-  if (targetIndex === -1) return;
+if (targetIndex === -1) return;
 
-  reordered.splice(targetIndex, 0, {
-    id,
-    display_order: 0,
-  });
+const insertIndex =
+  position === 'after'
+    ? targetIndex + 1
+    : targetIndex;
+
+reordered.splice(insertIndex, 0, {
+  id,
+  display_order: 0,
+});
 
   for (let i = 0; i < reordered.length; i++) {
     const { error } = await supabase
