@@ -100,16 +100,45 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
     await loadMissions();
   };
 
-  
+
 const reorderMission = async (
   missionId: string,
   targetMissionId: string
 ) => {
-  if (missionId === targetMissionId) return;
+  if (missionId === targetMissionId || draggedMissionId === null) {
+    setDraggedMissionId(null);
+    return;
+  }
 
-  await missionService.reorderMission(missionId, targetMissionId);
+  const previousMissions = [...missions];
+  const reordered = [...missions];
+
+  const fromIndex = reordered.findIndex(m => m.id === missionId);
+  const toIndex = reordered.findIndex(m => m.id === targetMissionId);
+
+  if (fromIndex === -1 || toIndex === -1) {
+    setDraggedMissionId(null);
+    return;
+  }
+
+  const [movedMission] = reordered.splice(fromIndex, 1);
+  reordered.splice(toIndex, 0, movedMission);
+
+  const optimisticMissions = reordered.map((mission, index) => ({
+    ...mission,
+    display_order: index + 1,
+  }));
+
+  setMissions(optimisticMissions);
   setDraggedMissionId(null);
-  await loadMissions();
+
+  try {
+    await missionService.reorderMission(missionId, targetMissionId);
+  } catch (error) {
+    console.error('Error reordering missions:', error);
+    setMissions(previousMissions);
+    alert('Não foi possível salvar a nova ordem das missões. Tente novamente.');
+  }
 };
 
 
