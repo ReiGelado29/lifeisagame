@@ -212,7 +212,8 @@ async reorderMission(id: string, targetId: string): Promise<void> {
     .from('missions')
     .select('id, display_order')
     .eq('character_id', dragged.character_id)
-    .order('display_order', { ascending: true });
+.order('display_order', { ascending: true })
+.order('created_at', { ascending: true });
 
   if (siblingsError) throw siblingsError;
   if (!siblings) return;
