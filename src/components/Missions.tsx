@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Plus, ChevronDown, ChevronRight, Trash2, Edit2, Check, Calendar, Flag, X, GripVertical } from 'lucide-react';
 import type { Mission, MissionStep, MissionWithSteps, MissionStepWithChildren, MissionUrgency } from '../types';
 import { missionService } from '../services';
