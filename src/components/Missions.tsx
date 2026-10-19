@@ -437,20 +437,46 @@ const reorderStep = async (
       : ''
   }`}
   draggable
-                onDragStart={(e) => {
-                  setDraggedMissionId(mission.id);
-                  e.dataTransfer.effectAllowed = 'move';
-                }}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  e.dataTransfer.dropEffect = 'move';
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  if (draggedMissionId && draggedMissionId !== mission.id) {
-                    reorderMission(draggedMissionId, mission.id);
-                  }
-                }}
+onDragStart={(e) => {
+  setDraggedMissionId(mission.id);
+  setDropTargetMissionId(null);
+  setDropPosition(null);
+  e.dataTransfer.effectAllowed = 'move';
+}}
+onDragOver={(e) => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+
+  if (draggedMissionId && draggedMissionId !== mission.id) {
+    updateDropTarget(mission.id, e.clientY, e.currentTarget);
+  }
+}}
+onDrop={(e) => {
+  e.preventDefault();
+
+  if (draggedMissionId && draggedMissionId !== mission.id) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const position = e.clientY < rect.top + rect.height / 2
+      ? 'before'
+      : 'after';
+
+    if (position === 'before') {
+      reorderMission(draggedMissionId, mission.id);
+    } else {
+      const targetIndex = missions.findIndex(m => m.id === mission.id);
+      const nextMission = missions[targetIndex + 1];
+
+      if (nextMission) {
+        reorderMission(draggedMissionId, nextMission.id);
+      } else {
+        reorderMission(draggedMissionId, mission.id);
+      }
+    }
+  }
+
+  setDropTargetMissionId(null);
+  setDropPosition(null);
+}}
               >
   {dropTargetMissionId === mission.id && dropPosition && (
   <div
