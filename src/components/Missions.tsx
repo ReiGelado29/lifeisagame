@@ -467,31 +467,22 @@ onDragOver={(e) => {
     updateDropTarget(mission.id, e.clientY, e.currentTarget);
   }
 }}
+
 onDrop={(e) => {
   e.preventDefault();
 
   if (draggedMissionId && draggedMissionId !== mission.id) {
     const rect = e.currentTarget.getBoundingClientRect();
-    const position = e.clientY < rect.top + rect.height / 2
-      ? 'before'
-      : 'after';
 
-    if (position === 'before') {
-      reorderMission(draggedMissionId, mission.id);
-    } else {
-      const targetIndex = missions.findIndex(m => m.id === mission.id);
-      const nextMission = missions[targetIndex + 1];
+    const position =
+      e.clientY < rect.top + rect.height / 2
+        ? 'before'
+        : 'after';
 
-      if (nextMission) {
-        reorderMission(draggedMissionId, nextMission.id);
-      } else {
-        reorderMission(draggedMissionId, mission.id);
-      }
-    }
+    reorderMission(draggedMissionId, mission.id, position);
+  } else {
+    finishMissionDrag();
   }
-
-  setDropTargetMissionId(null);
-  setDropPosition(null);
 }}
               >
   {dropTargetMissionId === mission.id && dropPosition && (
