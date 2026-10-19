@@ -422,10 +422,21 @@ const reorderStep = async (
             </div>
           ) : (
             missions.map((mission) => (
-              <div
-                key={mission.id}
-                className={`bg-slate-800/50 backdrop-blur rounded-2xl border overflow-hidden group cursor-move ${getStatusColor(mission.status)}`}
-                draggable
+<div
+  key={mission.id}
+  data-mission-id={mission.id}
+  className={`relative bg-slate-800/50 backdrop-blur rounded-2xl border overflow-hidden group cursor-move transition-all duration-150 ${
+    getStatusColor(mission.status)
+  } ${
+    draggedMissionId === mission.id
+      ? 'opacity-40 scale-[0.99] border-orange-400'
+      : ''
+  } ${
+    dropTargetMissionId === mission.id
+      ? 'border-emerald-400'
+      : ''
+  }`}
+  draggable
                 onDragStart={(e) => {
                   setDraggedMissionId(mission.id);
                   e.dataTransfer.effectAllowed = 'move';
@@ -441,6 +452,14 @@ const reorderStep = async (
                   }
                 }}
               >
+  {dropTargetMissionId === mission.id && dropPosition && (
+  <div
+    className={`absolute left-0 right-0 z-20 h-1 bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)] ${
+      dropPosition === 'before' ? 'top-0' : 'bottom-0'
+    }`}
+  />
+)}
+  
                <div
   onClick={() => setExpandedMissions(prev => ({ ...prev, [mission.id]: !prev[mission.id] }))}
   className="w-full flex items-center gap-4 p-4 bg-gradient-to-r from-orange-500/10 to-red-500/10 hover:from-orange-500/20 hover:to-red-500/20 transition-colors cursor-pointer"
