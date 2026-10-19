@@ -113,10 +113,11 @@ const autoScrollRef = useRef<number | null>(null);
 
 const reorderMission = async (
   missionId: string,
-  targetMissionId: string
+  targetMissionId: string,
+  position: 'before' | 'after' = 'before'
 ) => {
   if (missionId === targetMissionId || draggedMissionId === null) {
-    setDraggedMissionId(null);
+    finishMissionDrag();
     return;
   }
 
@@ -127,12 +128,26 @@ const reorderMission = async (
   const toIndex = reordered.findIndex(m => m.id === targetMissionId);
 
   if (fromIndex === -1 || toIndex === -1) {
-    setDraggedMissionId(null);
+    finishMissionDrag();
     return;
   }
 
   const [movedMission] = reordered.splice(fromIndex, 1);
-  reordered.splice(toIndex, 0, movedMission);
+  const adjustedTargetIndex = reordered.findIndex(
+    mission => mission.id === targetMissionId
+  );
+
+  if (adjustedTargetIndex === -1) {
+    finishMissionDrag();
+    return;
+  }
+
+  const insertIndex =
+    position === 'after'
+      ? adjustedTargetIndex + 1
+      : adjustedTargetIndex;
+
+  reordered.splice(insertIndex, 0, movedMission);
 
   const optimisticMissions = reordered.map((mission, index) => ({
     ...mission,
@@ -140,10 +155,11 @@ const reorderMission = async (
   }));
 
   setMissions(optimisticMissions);
-  setDraggedMissionId(null);
+  finishMissionDrag();
 
   try {
     await missionService.reorderMission(missionId, targetMissionId);
+    await loadMissions();
   } catch (error) {
     console.error('Error reordering missions:', error);
     setMissions(previousMissions);
