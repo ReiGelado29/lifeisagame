@@ -40,6 +40,11 @@ export function MissionsSection({ characterId, onBack }: MissionsSectionProps) {
   const [draggedStepId, setDraggedStepId] = useState<string | null>(null);
   const [dropTargetMissionId, setDropTargetMissionId] = useState<string | null>(null);
 const [dropPosition, setDropPosition] = useState<'before' | 'after' | null>(null);
+  
+  const dropTargetRef = useRef<{
+  missionId: string;
+  position: 'before' | 'after';
+} | null>(null);
 
 const touchDragRef = useRef<{
   missionId: string;
