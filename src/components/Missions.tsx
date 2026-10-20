@@ -197,9 +197,12 @@ const updateDropTarget = (
   element: HTMLElement
 ) => {
   const rect = element.getBoundingClientRect();
-  const position = clientY < rect.top + rect.height / 2
-    ? 'before'
-    : 'after';
+  const position: 'before' | 'after' =
+    clientY < rect.top + rect.height / 2
+      ? 'before'
+      : 'after';
+
+  dropTargetRef.current = { missionId, position };
 
   setDropTargetMissionId(missionId);
   setDropPosition(position);
