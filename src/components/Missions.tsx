@@ -198,7 +198,7 @@ const updateDropTarget = (
 
   
 const handleMissionTouchStart = (
-  e: React.TouchEvent<HTMLDivElement>,
+e: TouchEvent<HTMLDivElement>,
   missionId: string
 ) => {
   const touch = e.touches[0];
@@ -213,7 +213,7 @@ const handleMissionTouchStart = (
 };
 
 const handleMissionTouchMove = (
-  e: React.TouchEvent<HTMLDivElement>
+e: TouchEvent<HTMLDivElement>
 ) => {
   const touch = e.touches[0];
   const drag = touchDragRef.current;
