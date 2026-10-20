@@ -181,6 +181,7 @@ await missionService.reorderMission(
   
 const finishMissionDrag = () => {
   touchDragRef.current = null;
+  dropTargetRef.current = null;
   setDraggedMissionId(null);
   setDropTargetMissionId(null);
   setDropPosition(null);
