@@ -587,10 +587,6 @@ const reorderStep = async (
   ref={(element) => {
   missionCardRefs.current[mission.id] = element;
 }}
-onTouchStart={(e) => handleMissionTouchStart(e, mission.id)}
-onTouchMove={handleMissionTouchMove}
-onTouchEnd={handleMissionTouchEnd}
-onTouchCancel={handleMissionTouchEnd}
   className={`relative bg-slate-800/50 backdrop-blur rounded-2xl border overflow-hidden group cursor-move transition-all duration-150 ${
     getStatusColor(mission.status)
   } ${
