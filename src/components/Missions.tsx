@@ -277,9 +277,42 @@ e: TouchEvent<HTMLDivElement>
     );
   }
 
-  if (scrollAmount !== 0) {
-    window.scrollBy(0, scrollAmount);
-  }
+if (autoScrollRef.current !== null) {
+  cancelAnimationFrame(autoScrollRef.current);
+  autoScrollRef.current = null;
+}
+
+if (scrollAmount !== 0) {
+  const scrollStep = () => {
+    const currentDrag = touchDragRef.current;
+
+    if (!currentDrag || !touchDragStartedRef.current) {
+      autoScrollRef.current = null;
+      return;
+    }
+
+    const currentY = currentDrag.currentY;
+    const height = window.innerHeight;
+    const edge = 100;
+
+    let amount = 0;
+
+    if (currentY < edge) {
+      amount = -Math.max(2, Math.ceil((edge - currentY) / 5));
+    } else if (currentY > height - edge) {
+      amount = Math.max(2, Math.ceil((currentY - (height - edge)) / 5));
+    }
+
+    if (amount !== 0) {
+      window.scrollBy(0, amount);
+      autoScrollRef.current = requestAnimationFrame(scrollStep);
+    } else {
+      autoScrollRef.current = null;
+    }
+  };
+
+  autoScrollRef.current = requestAnimationFrame(scrollStep);
+}
 };
 
 const handleMissionTouchEnd = async () => {
