@@ -161,7 +161,11 @@ const reorderMission = async (
   finishMissionDrag();
 
   try {
-    await missionService.reorderMission(missionId, targetMissionId);
+await missionService.reorderMission(
+  missionId,
+  targetMissionId,
+  position
+);
     await loadMissions();
   } catch (error) {
     console.error('Error reordering missions:', error);
