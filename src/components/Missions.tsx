@@ -330,8 +330,7 @@ if (scrollAmount !== 0) {
 const handleMissionTouchEnd = async () => {
   const drag = touchDragRef.current;
   const wasDragging = touchDragStartedRef.current;
-  const targetId = dropTargetMissionId;
-  const position = dropPosition;
+  const target = dropTargetRef.current;
 
   if (autoScrollRef.current !== null) {
     cancelAnimationFrame(autoScrollRef.current);
@@ -341,8 +340,17 @@ const handleMissionTouchEnd = async () => {
   touchDragRef.current = null;
   touchDragStartedRef.current = false;
 
-  if (wasDragging && drag && targetId && position) {
-    await reorderMission(drag.missionId, targetId, position);
+  if (
+    wasDragging &&
+    drag &&
+    target &&
+    drag.missionId !== target.missionId
+  ) {
+    await reorderMission(
+      drag.missionId,
+      target.missionId,
+      target.position
+    );
   } else {
     finishMissionDrag();
   }
