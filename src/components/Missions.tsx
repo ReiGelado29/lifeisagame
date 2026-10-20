@@ -223,6 +223,9 @@ e: TouchEvent<HTMLDivElement>,
   };
 
   touchDragStartedRef.current = false;
+  dropTargetRef.current = null;
+setDropTargetMissionId(null);
+setDropPosition(null);
 };
 
 const handleMissionTouchMove = (
