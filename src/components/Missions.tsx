@@ -321,14 +321,19 @@ const handleMissionTouchEnd = async () => {
   const targetId = dropTargetMissionId;
   const position = dropPosition;
 
+  if (autoScrollRef.current !== null) {
+    cancelAnimationFrame(autoScrollRef.current);
+    autoScrollRef.current = null;
+  }
+
+  touchDragRef.current = null;
+  touchDragStartedRef.current = false;
+
   if (wasDragging && drag && targetId && position) {
     await reorderMission(drag.missionId, targetId, position);
   } else {
     finishMissionDrag();
   }
-
-  touchDragRef.current = null;
-  touchDragStartedRef.current = false;
 };
 
 const reorderStep = async (
