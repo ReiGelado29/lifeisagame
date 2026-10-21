@@ -564,7 +564,8 @@ const handleMissionTouchEnd = async () => {
 const reorderStep = async (
   stepId: string,
   targetStepId: string,
-  missionId: string
+  missionId: string,
+  position: 'before' | 'after' = 'before'
 ) => {
   const mission = missions.find(m => m.id === missionId);
   if (!mission) return;
@@ -577,17 +578,19 @@ const reorderStep = async (
     targetStep &&
     draggedStep.parent_step_id === targetStep.parent_step_id
   ) {
-    await missionService.reorderStep(stepId, targetStepId);
+    await missionService.reorderStep(stepId, targetStepId, position);
     setDraggedStepId(null);
+    stepDropTargetRef.current = null;
+    setDropTargetStepId(null);
+    setStepDropPosition(null);
     await loadMissions();
   }
 };
 
-
-  const getUrgencyStyle = (urgency: MissionUrgency) => {
-    const config = URGENCY_CONFIG[urgency];
-    return `${config.bg} ${config.color} ${config.border}`;
-  };
+const getUrgencyStyle = (urgency: MissionUrgency) => {
+  const config = URGENCY_CONFIG[urgency];
+  return `${config.bg} ${config.color} ${config.border}`;
+};
 
   const getStatusColor = (status: string) => {
     switch (status) {
