@@ -654,33 +654,71 @@ const reorderStep = async (
             </div>
           </div>
         ) : (
-          <div
-            className={`flex items-center gap-3 p-3 rounded-lg transition-colors group cursor-move ${
-              step.is_completed ? 'bg-emerald-500/10' : 'bg-slate-700/30 hover:bg-slate-700/50'
-            }`}
-            style={{ marginLeft: indent }}
+<div
   ref={(element) => {
     stepCardRefs.current[step.id] = element;
   }}
   data-step-id={step.id}
   data-mission-id={missionId}
   data-parent-step-id={step.parent_step_id ?? ''}
-            draggable
-            onDragStart={(e) => {
-              setDraggedStepId(step.id);
-              e.dataTransfer.effectAllowed = 'move';
-            }}
-            onDragOver={(e) => {
-              e.preventDefault();
-              e.dataTransfer.dropEffect = 'move';
-            }}
-            onDrop={(e) => {
-              e.preventDefault();
-              if (draggedStepId && draggedStepId !== step.id) {
-                reorderStep(draggedStepId, step.id, missionId);
-              }
-            }}
-          >
+  className={`relative flex items-center gap-3 p-3 rounded-lg transition-colors group ${
+    step.is_completed ? 'bg-emerald-500/10' : 'bg-slate-700/30 hover:bg-slate-700/50'
+  }`}
+  style={{ marginLeft: indent }}
+  onDragOver={(e) => {
+    const draggedId = e.dataTransfer.getData('text/plain') || draggedStepId;
+
+    if (!draggedId || draggedId === step.id) return;
+
+    const draggedStep = findStepInTree(
+      missions.find(m => m.id === missionId)?.steps ?? [],
+      draggedId
+    );
+
+    if (
+      !draggedStep ||
+      draggedStep.parent_step_id !== step.parent_step_id
+    ) {
+      return;
+    }
+
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    updateStepDropTarget(step.id, e.clientY, e.currentTarget);
+  }}
+  onDrop={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const draggedId = e.dataTransfer.getData('text/plain') || draggedStepId;
+
+    if (!draggedId || draggedId === step.id) return;
+
+    const draggedStep = findStepInTree(
+      missions.find(m => m.id === missionId)?.steps ?? [],
+      draggedId
+    );
+
+    if (
+      draggedStep &&
+      draggedStep.parent_step_id === step.parent_step_id
+    ) {
+      void reorderStep(draggedId, step.id, missionId);
+    }
+
+    setDraggedStepId(null);
+    stepDropTargetRef.current = null;
+    setDropTargetStepId(null);
+    setStepDropPosition(null);
+  }}
+>
+  {dropTargetStepId === step.id && stepDropPosition && (
+    <div
+      className={`absolute left-0 right-0 h-0.5 bg-emerald-400 z-20 pointer-events-none ${
+        stepDropPosition === 'before' ? 'top-0' : 'bottom-0'
+      }`}
+    />
+  )}
 <div
   draggable
   onDragStart={(e) => {
