@@ -622,13 +622,6 @@ const reorderStep = async (
       ? 'border-emerald-400'
       : ''
   }`}
-  draggable
-onDragStart={(e) => {
-  setDraggedMissionId(mission.id);
-  setDropTargetMissionId(null);
-  setDropPosition(null);
-  e.dataTransfer.effectAllowed = 'move';
-}}
 onDragOver={(e) => {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
@@ -668,8 +661,20 @@ onDrop={(e) => {
   className="w-full flex items-center gap-4 p-4 bg-gradient-to-r from-orange-500/10 to-red-500/10 hover:from-orange-500/20 hover:to-red-500/20 transition-colors cursor-pointer"
 >
 <div
+  draggable
+  onDragStart={(e) => {
+    e.stopPropagation();
+    setDraggedMissionId(mission.id);
+    setDropTargetMissionId(null);
+    setDropPosition(null);
+    e.dataTransfer.effectAllowed = 'move';
+  }}
+  onClick={(e) => e.stopPropagation()}
   className="text-slate-500 group-hover:text-slate-400 transition-colors opacity-0 group-hover:opacity-100 touch-none select-none cursor-grab active:cursor-grabbing"
-  onTouchStart={(e) => handleMissionTouchStart(e, mission.id)}
+  onTouchStart={(e) => {
+    e.stopPropagation();
+    handleMissionTouchStart(e, mission.id);
+  }}
   onTouchMove={handleMissionTouchMove}
   onTouchEnd={handleMissionTouchEnd}
   onTouchCancel={handleMissionTouchEnd}
