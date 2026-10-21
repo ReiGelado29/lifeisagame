@@ -226,7 +226,24 @@ const updateDropTarget = (
   setDropTargetMissionId(missionId);
   setDropPosition(position);
 };
+  
+const updateStepDropTarget = (
+  stepId: string,
+  clientY: number,
+  element: HTMLElement
+) => {
+  const rect = element.getBoundingClientRect();
 
+  const position: 'before' | 'after' =
+    clientY < rect.top + rect.height / 2
+      ? 'before'
+      : 'after';
+
+  stepDropTargetRef.current = { stepId, position };
+
+  setDropTargetStepId(stepId);
+  setStepDropPosition(position);
+};
   
 const handleMissionTouchStart = (
 e: TouchEvent<HTMLDivElement>,
