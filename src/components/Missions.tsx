@@ -672,7 +672,8 @@ onDragStart={(e) => {
   setDropPosition(null);
 }}
   onClick={(e) => e.stopPropagation()}
-  className="text-slate-500 group-hover:text-slate-400 transition-colors opacity-0 group-hover:opacity-100 touch-none select-none cursor-grab active:cursor-grabbing"
+className="text-slate-500 group-hover:text-slate-400 transition-colors opacity-0 group-hover:opacity-100 touch-none select-none cursor-grab active:cursor-grabbing"
+style={{ WebkitTouchCallout: 'none', WebkitUserSelect: 'none', userSelect: 'none' }}
   onTouchStart={(e) => {
     e.stopPropagation();
     handleMissionTouchStart(e, mission.id);
