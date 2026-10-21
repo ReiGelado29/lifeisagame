@@ -681,9 +681,48 @@ const reorderStep = async (
               }
             }}
           >
-            <div className="text-slate-500 group-hover:text-slate-400 transition-colors opacity-0 group-hover:opacity-100">
-              <GripVertical className="w-4 h-4" />
-            </div>
+<div
+  draggable
+  onDragStart={(e) => {
+    e.stopPropagation();
+    e.dataTransfer.setData('text/plain', step.id);
+    e.dataTransfer.effectAllowed = 'move';
+
+    setDraggedStepId(step.id);
+    stepDropTargetRef.current = null;
+    setDropTargetStepId(null);
+    setStepDropPosition(null);
+  }}
+  onClick={(e) => e.stopPropagation()}
+  className="text-slate-500 group-hover:text-slate-400 transition-colors opacity-0 group-hover:opacity-100 touch-none select-none cursor-grab active:cursor-grabbing"
+  style={{
+    WebkitTouchCallout: 'none',
+    WebkitUserSelect: 'none',
+    userSelect: 'none',
+  }}
+  onTouchStart={(e) => {
+    e.stopPropagation();
+    e.currentTarget.draggable = false;
+
+    handleStepTouchStart(
+      e,
+      step.id,
+      missionId,
+      step.parent_step_id ?? null
+    );
+  }}
+  onTouchMove={handleStepTouchMove}
+  onTouchEnd={(e) => {
+    e.currentTarget.draggable = true;
+    void handleStepTouchEnd();
+  }}
+  onTouchCancel={(e) => {
+    e.currentTarget.draggable = true;
+    void handleStepTouchEnd();
+  }}
+>
+  <GripVertical className="w-4 h-4" />
+</div>
 
             <button
               onClick={() => toggleStepComplete(step)}
