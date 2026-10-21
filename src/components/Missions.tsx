@@ -396,6 +396,38 @@ const handleStepTouchMove = (
     stepAutoScrollRef.current = requestAnimationFrame(scrollStep);
   }
 };
+  
+const handleStepTouchEnd = async () => {
+  const drag = stepTouchDragRef.current;
+  const wasDragging = stepTouchDragStartedRef.current;
+  const target = stepDropTargetRef.current;
+
+  if (stepAutoScrollRef.current !== null) {
+    cancelAnimationFrame(stepAutoScrollRef.current);
+    stepAutoScrollRef.current = null;
+  }
+
+  stepTouchDragRef.current = null;
+  stepTouchDragStartedRef.current = false;
+
+  if (
+    wasDragging &&
+    drag &&
+    target &&
+    drag.stepId !== target.stepId
+  ) {
+    await reorderStep(
+      drag.stepId,
+      target.stepId,
+      drag.missionId
+    );
+  }
+
+  setDraggedStepId(null);
+  stepDropTargetRef.current = null;
+  setDropTargetStepId(null);
+  setStepDropPosition(null);
+};
 
 const handleMissionTouchMove = (
 e: TouchEvent<HTMLDivElement>
