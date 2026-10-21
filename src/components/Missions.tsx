@@ -416,11 +416,12 @@ const handleStepTouchEnd = async () => {
     target &&
     drag.stepId !== target.stepId
   ) {
-    await reorderStep(
-      drag.stepId,
-      target.stepId,
-      drag.missionId
-    );
+await reorderStep(
+  drag.stepId,
+  target.stepId,
+  drag.missionId,
+  target.position
+);
   }
 
   setDraggedStepId(null);
