@@ -284,6 +284,117 @@ const handleStepTouchStart = (
   setDropTargetStepId(null);
   setStepDropPosition(null);
 };
+  
+const handleStepTouchMove = (
+  e: TouchEvent<HTMLDivElement>
+) => {
+  const touch = e.touches[0];
+  const drag = stepTouchDragRef.current;
+
+  if (!drag) return;
+
+  const deltaY = Math.abs(touch.clientY - drag.startY);
+
+  if (!stepTouchDragStartedRef.current && deltaY > 10) {
+    stepTouchDragStartedRef.current = true;
+    setDraggedStepId(drag.stepId);
+  }
+
+  if (!stepTouchDragStartedRef.current) return;
+
+  e.preventDefault();
+  drag.currentY = touch.clientY;
+
+  const cards = Object.entries(stepCardRefs.current);
+  let nearestCard: HTMLDivElement | null = null;
+  let nearestId: string | null = null;
+  let nearestDistance = Infinity;
+
+  for (const [id, card] of cards) {
+    if (!card || id === drag.stepId) continue;
+
+    if (card.dataset.missionId !== drag.missionId) continue;
+
+    const parentId = card.dataset.parentStepId || null;
+    if (parentId !== drag.parentStepId) continue;
+
+    const rect = card.getBoundingClientRect();
+
+    if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+      nearestCard = card;
+      nearestId = id;
+      break;
+    }
+
+    const distance = Math.min(
+      Math.abs(touch.clientY - rect.top),
+      Math.abs(touch.clientY - rect.bottom)
+    );
+
+    if (distance < nearestDistance) {
+      nearestDistance = distance;
+      nearestCard = card;
+      nearestId = id;
+    }
+  }
+
+  if (nearestCard && nearestId) {
+    updateStepDropTarget(nearestId, touch.clientY, nearestCard);
+  }
+
+  const edgeSize = 100;
+  const viewportHeight = window.innerHeight;
+
+  let scrollAmount = 0;
+
+  if (touch.clientY < edgeSize) {
+    scrollAmount = -Math.ceil((edgeSize - touch.clientY) / 5);
+  } else if (touch.clientY > viewportHeight - edgeSize) {
+    scrollAmount = Math.ceil(
+      (touch.clientY - (viewportHeight - edgeSize)) / 5
+    );
+  }
+
+  if (stepAutoScrollRef.current !== null) {
+    cancelAnimationFrame(stepAutoScrollRef.current);
+    stepAutoScrollRef.current = null;
+  }
+
+  if (scrollAmount !== 0) {
+    const scrollStep = () => {
+      const currentDrag = stepTouchDragRef.current;
+
+      if (!currentDrag || !stepTouchDragStartedRef.current) {
+        stepAutoScrollRef.current = null;
+        return;
+      }
+
+      const currentY = currentDrag.currentY;
+      const height = window.innerHeight;
+      const edge = 100;
+
+      let amount = 0;
+
+      if (currentY < edge) {
+        amount = -Math.max(2, Math.ceil((edge - currentY) / 5));
+      } else if (currentY > height - edge) {
+        amount = Math.max(
+          2,
+          Math.ceil((currentY - (height - edge)) / 5)
+        );
+      }
+
+      if (amount !== 0) {
+        window.scrollBy(0, amount);
+        stepAutoScrollRef.current = requestAnimationFrame(scrollStep);
+      } else {
+        stepAutoScrollRef.current = null;
+      }
+    };
+
+    stepAutoScrollRef.current = requestAnimationFrame(scrollStep);
+  }
+};
 
 const handleMissionTouchMove = (
 e: TouchEvent<HTMLDivElement>
