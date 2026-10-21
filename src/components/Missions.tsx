@@ -707,7 +707,14 @@ const getUrgencyStyle = (urgency: MissionUrgency) => {
       draggedStep &&
       draggedStep.parent_step_id === step.parent_step_id
     ) {
-      void reorderStep(draggedId, step.id, missionId);
+const rect = e.currentTarget.getBoundingClientRect();
+
+const position: 'before' | 'after' =
+  e.clientY < rect.top + rect.height / 2
+    ? 'before'
+    : 'after';
+
+void reorderStep(draggedId, step.id, missionId, position);
     }
 
     setDraggedStepId(null);
