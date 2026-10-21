@@ -250,7 +250,11 @@ reordered.splice(insertIndex, 0, {
   }
 },
 
-async reorderStep(id: string, targetId: string): Promise<void> {
+async reorderStep(
+  id: string,
+  targetId: string,
+  position: 'before' | 'after' = 'before'
+): Promise<void> {
   const { data: dragged, error: draggedError } = await supabase
     .from('mission_steps')
     .select('id, mission_id, parent_step_id')
@@ -294,7 +298,11 @@ async reorderStep(id: string, targetId: string): Promise<void> {
 
   if (targetIndex === -1) return;
 
-  reordered.splice(targetIndex, 0, {
+  const insertIndex = position === 'after'
+    ? targetIndex + 1
+    : targetIndex;
+
+  reordered.splice(insertIndex, 0, {
     id,
     display_order: 0,
   });
