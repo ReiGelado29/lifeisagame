@@ -611,7 +611,7 @@ const reorderStep = async (
   ref={(element) => {
   missionCardRefs.current[mission.id] = element;
 }}
-  className={`relative bg-slate-800/50 backdrop-blur rounded-2xl border overflow-hidden group cursor-move transition-all duration-150 ${
+  className={`relative bg-slate-800/50 backdrop-blur rounded-2xl border overflow-hidden group cursor-default transition-all duration-150 ${
     getStatusColor(mission.status)
   } ${
     draggedMissionId === mission.id
