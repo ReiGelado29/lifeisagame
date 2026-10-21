@@ -262,6 +262,28 @@ e: TouchEvent<HTMLDivElement>,
 setDropTargetMissionId(null);
 setDropPosition(null);
 };
+  
+const handleStepTouchStart = (
+  e: TouchEvent<HTMLDivElement>,
+  stepId: string,
+  missionId: string,
+  parentStepId: string | null
+) => {
+  const touch = e.touches[0];
+
+  stepTouchDragRef.current = {
+    stepId,
+    missionId,
+    parentStepId,
+    startY: touch.clientY,
+    currentY: touch.clientY,
+  };
+
+  stepTouchDragStartedRef.current = false;
+  stepDropTargetRef.current = null;
+  setDropTargetStepId(null);
+  setStepDropPosition(null);
+};
 
 const handleMissionTouchMove = (
 e: TouchEvent<HTMLDivElement>
