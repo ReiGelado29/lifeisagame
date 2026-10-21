@@ -54,6 +54,21 @@ const touchDragRef = useRef<{
   currentY: number;
 } | null>(null);
 
+  const stepTouchDragRef = useRef<{
+  stepId: string;
+  missionId: string;
+  parentStepId: string | null;
+  startY: number;
+  currentY: number;
+} | null>(null);
+
+const stepDropTargetRef = useRef<{
+  stepId: string;
+  position: 'before' | 'after';
+} | null>(null);
+
+const stepTouchDragStartedRef = useRef(false);
+
 const autoScrollRef = useRef<number | null>(null);
 const touchDragStartedRef = useRef(false);
 const missionCardRefs = useRef<Record<string, HTMLDivElement | null>>({});
