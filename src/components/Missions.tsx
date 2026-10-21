@@ -659,6 +659,12 @@ const reorderStep = async (
               step.is_completed ? 'bg-emerald-500/10' : 'bg-slate-700/30 hover:bg-slate-700/50'
             }`}
             style={{ marginLeft: indent }}
+  ref={(element) => {
+    stepCardRefs.current[step.id] = element;
+  }}
+  data-step-id={step.id}
+  data-mission-id={missionId}
+  data-parent-step-id={step.parent_step_id ?? ''}
             draggable
             onDragStart={(e) => {
               setDraggedStepId(step.id);
