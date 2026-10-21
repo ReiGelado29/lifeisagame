@@ -662,13 +662,15 @@ onDrop={(e) => {
 >
 <div
   draggable
-  onDragStart={(e) => {
-    e.stopPropagation();
-    setDraggedMissionId(mission.id);
-    setDropTargetMissionId(null);
-    setDropPosition(null);
-    e.dataTransfer.effectAllowed = 'move';
-  }}
+onDragStart={(e) => {
+  e.stopPropagation();
+  e.dataTransfer.setData('text/plain', mission.id);
+  e.dataTransfer.effectAllowed = 'move';
+
+  setDraggedMissionId(mission.id);
+  setDropTargetMissionId(null);
+  setDropPosition(null);
+}}
   onClick={(e) => e.stopPropagation()}
   className="text-slate-500 group-hover:text-slate-400 transition-colors opacity-0 group-hover:opacity-100 touch-none select-none cursor-grab active:cursor-grabbing"
   onTouchStart={(e) => {
