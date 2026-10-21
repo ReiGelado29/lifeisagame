@@ -674,13 +674,23 @@ onDragStart={(e) => {
   onClick={(e) => e.stopPropagation()}
 className="text-slate-500 group-hover:text-slate-400 transition-colors opacity-0 group-hover:opacity-100 touch-none select-none cursor-grab active:cursor-grabbing"
 style={{ WebkitTouchCallout: 'none', WebkitUserSelect: 'none', userSelect: 'none' }}
-  onTouchStart={(e) => {
-    e.stopPropagation();
-    handleMissionTouchStart(e, mission.id);
-  }}
-  onTouchMove={handleMissionTouchMove}
-  onTouchEnd={handleMissionTouchEnd}
-  onTouchCancel={handleMissionTouchEnd}
+onTouchStart={(e) => {
+  e.stopPropagation();
+
+  // Impede o arraste nativo do navegador durante o toque.
+  e.currentTarget.draggable = false;
+
+  handleMissionTouchStart(e, mission.id);
+}}
+onTouchMove={handleMissionTouchMove}
+onTouchEnd={(e) => {
+  e.currentTarget.draggable = true;
+  void handleMissionTouchEnd();
+}}
+onTouchCancel={(e) => {
+  e.currentTarget.draggable = true;
+  void handleMissionTouchEnd();
+}}
 >
   <GripVertical className="w-4 h-4" />
 </div>
