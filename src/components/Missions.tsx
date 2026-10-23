@@ -794,15 +794,17 @@ void reorderStep(draggedId, step.id, missionId, position);
             )}
             {!hasChildren && <div className="w-4" />}
 
-            <div className="flex-1 min-w-0">
-              <p className={`font-medium truncate ${step.is_completed ? 'text-slate-400 line-through' : 'text-white'}`}>
-                {step.title}
-              </p>
-              {step.description && (
-                <p className="text-xs text-slate-400 line-clamp-1">{step.description}</p>
-              )}
-              <p className="text-xs text-slate-500">XP: {step.xp_reward}</p>
-            </div>
+<div className="flex-1 min-w-0">
+  <p className={`font-medium whitespace-normal break-words ${step.is_completed ? 'text-slate-400 line-through' : 'text-white'}`}>
+    {step.title}
+  </p>
+  {step.description && (
+    <p className="text-xs text-slate-400 whitespace-normal break-words">
+      {step.description}
+    </p>
+  )}
+  <p className="text-xs text-slate-500">XP: {step.xp_reward}</p>
+</div>
 
             <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
               {level < MAX_TREE_DEPTH && (
