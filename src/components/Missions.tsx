@@ -798,11 +798,11 @@ void reorderStep(draggedId, step.id, missionId, position);
   <p className={`font-medium whitespace-normal break-words ${step.is_completed ? 'text-slate-400 line-through' : 'text-white'}`}>
     {step.title}
   </p>
-  {step.description && (
-    <p className="text-xs text-slate-400 whitespace-normal break-words">
-      {step.description}
-    </p>
-  )}
+{step.description && (
+  <p className="text-xs text-slate-400 whitespace-pre-wrap break-words">
+    {step.description}
+  </p>
+)}
   <p className="text-xs text-slate-500">XP: {step.xp_reward}</p>
 </div>
 
