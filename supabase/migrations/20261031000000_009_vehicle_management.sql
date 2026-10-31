@@ -216,47 +216,107 @@ CREATE TRIGGER validate_vehicle_component_template_trigger
 BEFORE INSERT OR UPDATE ON public.vehicle_components
 FOR EACH ROW EXECUTE FUNCTION public.validate_vehicle_component_template();
 
--- Instalação/troca atualiza o estado vigente, mantendo todos os eventos.
+-- Recalcula o estado atual a partir da linha do tempo completa.
+-- Insercoes retroativas, correcoes e exclusoes nao sobrescrevem o evento mais recente.
 CREATE OR REPLACE FUNCTION public.sync_vehicle_component_history()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $
+DECLARE
+  affected_component_id uuid;
 BEGIN
-  IF NEW.event_type IN ('initial_installation','replacement') THEN
-    UPDATE public.vehicle_components
-    SET current_install_date = NEW.event_date,
-        current_install_odometer = NEW.odometer,
-        quantity = NEW.quantity,
-        is_active = true,
-        updated_at = now()
-    WHERE id = NEW.component_id;
-  ELSIF NEW.event_type = 'removal' THEN
-    UPDATE public.vehicle_components SET is_active = false, updated_at = now()
-    WHERE id = NEW.component_id;
+  IF TG_OP = 'DELETE' THEN
+    affected_component_id := OLD.component_id;
+    PERFORM public.recalculate_vehicle_component_state(affected_component_id);
+    RETURN OLD;
   END IF;
+
+  IF TG_OP = 'UPDATE' AND OLD.component_id IS DISTINCT FROM NEW.component_id THEN
+    PERFORM public.recalculate_vehicle_component_state(OLD.component_id);
+  END IF;
+
+  PERFORM public.recalculate_vehicle_component_state(NEW.component_id);
   RETURN NEW;
 END;
-$$;
+$;
+
+CREATE OR REPLACE FUNCTION public.recalculate_vehicle_component_state(target_component_id uuid)
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public
+AS $
+DECLARE
+  latest_state_type text;
+  latest_install record;
+BEGIN
+  SELECT event_type INTO latest_state_type
+  FROM public.vehicle_component_history
+  WHERE component_id = target_component_id
+    AND event_type IN ('initial_installation','replacement','removal')
+  ORDER BY event_date DESC, created_at DESC, id DESC
+  LIMIT 1;
+
+  SELECT event_date, odometer, quantity INTO latest_install
+  FROM public.vehicle_component_history
+  WHERE component_id = target_component_id
+    AND event_type IN ('initial_installation','replacement')
+  ORDER BY event_date DESC, created_at DESC, id DESC
+  LIMIT 1;
+
+  UPDATE public.vehicle_components
+  SET current_install_date = latest_install.event_date,
+      current_install_odometer = latest_install.odometer,
+      quantity = COALESCE(latest_install.quantity, quantity),
+      is_active = (latest_state_type IS NOT NULL AND latest_state_type <> 'removal'),
+      updated_at = now()
+  WHERE id = target_component_id;
+END;
+$;
+
 CREATE TRIGGER sync_vehicle_component_history_trigger
-AFTER INSERT ON public.vehicle_component_history
+AFTER INSERT OR UPDATE OR DELETE ON public.vehicle_component_history
 FOR EACH ROW EXECUTE FUNCTION public.sync_vehicle_component_history();
 
--- Avaliação nova atualiza valor atual, sem apagar histórico.
+-- Valor atual sempre reflete a avaliacao mais recente, inclusive apos correcao/exclusao.
 CREATE OR REPLACE FUNCTION public.sync_vehicle_valuation()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $
 BEGIN
-  UPDATE public.vehicles
-  SET current_market_value = NEW.value,
-      fipe_code = COALESCE(NEW.fipe_code, fipe_code),
-      updated_at = now()
-  WHERE id = NEW.vehicle_id;
+  IF TG_OP = 'DELETE' THEN
+    PERFORM public.recalculate_vehicle_valuation(OLD.vehicle_id);
+    RETURN OLD;
+  END IF;
+  IF TG_OP = 'UPDATE' AND OLD.vehicle_id IS DISTINCT FROM NEW.vehicle_id THEN
+    PERFORM public.recalculate_vehicle_valuation(OLD.vehicle_id);
+  END IF;
+  PERFORM public.recalculate_vehicle_valuation(NEW.vehicle_id);
   RETURN NEW;
 END;
-$$;
+$;
+
+CREATE OR REPLACE FUNCTION public.recalculate_vehicle_valuation(target_vehicle_id uuid)
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public
+AS $
+DECLARE
+  latest_valuation record;
+BEGIN
+  SELECT value, fipe_code INTO latest_valuation
+  FROM public.vehicle_valuations
+  WHERE vehicle_id = target_vehicle_id
+  ORDER BY valuation_date DESC, created_at DESC, id DESC
+  LIMIT 1;
+
+  UPDATE public.vehicles
+  SET current_market_value = latest_valuation.value,
+      fipe_code = latest_valuation.fipe_code,
+      updated_at = now()
+  WHERE id = target_vehicle_id;
+END;
+$;
+
 CREATE TRIGGER sync_vehicle_valuation_trigger
-AFTER INSERT ON public.vehicle_valuations
+AFTER INSERT OR UPDATE OR DELETE ON public.vehicle_valuations
 FOR EACH ROW EXECUTE FUNCTION public.sync_vehicle_valuation();
 
 -- Hodometro principal nunca retrocede por leitura historica.
