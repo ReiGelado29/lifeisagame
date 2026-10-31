@@ -1,3 +1,5 @@
+BEGIN;
+
 -- 009 - Gerenciador de Veiculos
 -- Estrutura independente do inventario existente.
 
@@ -455,3 +457,5 @@ VALUES
 ('bus','brakes','Pastilhas ou lonas de freio',40000,NULL,'Depende da operacao'),
 ('bus','tires','Pneus',80000,60,'Depende de eixo, carga e recapagem')
 ON CONFLICT (vehicle_type, category, name) DO NOTHING;
+
+COMMIT;
