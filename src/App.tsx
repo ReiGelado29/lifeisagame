@@ -7,6 +7,7 @@ import { ProgressTracking } from './components/ProgressTracking';
 import { MissionsSection } from './components/Missions';
 import { InventorySection } from './components/Inventory';
 import { NotepadSection } from './components/Notepad';
+import { VehiclesSection } from './components/Vehicles';
 import type { Character } from './types';
 import { characterService } from './services';
 import { calculateLevel } from './engine';
@@ -18,22 +19,15 @@ function AppContent() {
   const [loadingCharacter, setLoadingCharacter] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      loadCharacter();
-    } else {
-      setLoadingCharacter(false);
-    }
+    if (user) loadCharacter();
+    else setLoadingCharacter(false);
   }, [user]);
 
   const loadCharacter = async () => {
     setLoadingCharacter(true);
     try {
       let charData = await characterService.getCharacter(user?.id || '');
-
-      if (!charData) {
-        charData = await characterService.createCharacter(user?.id || '', 'Adventurer');
-      }
-
+      if (!charData) charData = await characterService.createCharacter(user?.id || '', 'Adventurer');
       setCharacter(charData);
     } catch (error) {
       console.error('Error loading character:', error);
@@ -42,99 +36,30 @@ function AppContent() {
     }
   };
 
-  const handleSelectSection = (sectionId: string) => {
-    setCurrentSection(sectionId);
-  };
-
+  const handleSelectSection = (sectionId: string) => setCurrentSection(sectionId);
   const handleBack = () => {
     setCurrentSection(null);
     loadCharacter();
   };
 
   if (loading || loadingCharacter) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl animate-pulse" />
-          <p className="text-slate-400">Carregando...</p>
-        </div>
-      </div>
-    );
+    return <div className="min-h-screen bg-slate-900 flex items-center justify-center"><div className="flex flex-col items-center gap-4"><div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl animate-pulse" /><p className="text-slate-400">Carregando...</p></div></div>;
   }
+  if (!user) return <AuthScreen />;
+  if (!character) return <div className="min-h-screen bg-slate-900 flex items-center justify-center"><p className="text-slate-400">Criando personagem...</p></div>;
 
-  if (!user) {
-    return <AuthScreen />;
-  }
+  if (currentSection === 'character') return <CharacterSection characterId={character.id} onBack={handleBack} onUpdateCharacter={setCharacter} />;
+  if (currentSection === 'progress') return <ProgressTracking characterId={character.id} onBack={handleBack} />;
+  if (currentSection === 'missions') return <MissionsSection characterId={character.id} onBack={handleBack} />;
+  if (currentSection === 'inventory') return <InventorySection characterId={character.id} onBack={handleBack} />;
+  if (currentSection === 'notepad') return <NotepadSection characterId={character.id} onBack={handleBack} />;
+  if (currentSection === 'vehicles') return <VehiclesSection characterId={character.id} onBack={handleBack} />;
 
-  if (!character) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <p className="text-slate-400">Criando personagem...</p>
-      </div>
-    );
-  }
-
-  if (currentSection === 'character') {
-    return (
-      <CharacterSection
-        characterId={character.id}
-        onBack={handleBack}
-        onUpdateCharacter={setCharacter}
-      />
-    );
-  }
-
-  if (currentSection === 'progress') {
-    return (
-      <ProgressTracking
-        characterId={character.id}
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentSection === 'missions') {
-    return (
-      <MissionsSection
-        characterId={character.id}
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentSection === 'inventory') {
-    return (
-      <InventorySection
-        characterId={character.id}
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentSection === 'notepad') {
-    return (
-      <NotepadSection
-        characterId={character.id}
-        onBack={handleBack}
-      />
-    );
-  }
-
-  return (
-    <MainMenu
-      onSelectSection={handleSelectSection}
-      characterName={character.name}
-      characterLevel={calculateLevel(character.xp)}
-    />
-  );
+  return <MainMenu onSelectSection={handleSelectSection} characterName={character.name} characterLevel={calculateLevel(character.xp)} />;
 }
 
 function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  );
+  return <AuthProvider><AppContent /></AuthProvider>;
 }
 
 export default App;
