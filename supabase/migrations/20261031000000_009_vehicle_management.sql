@@ -246,7 +246,9 @@ SET search_path = public
 AS $$
 DECLARE
   latest_state_type text;
-  latest_install record;
+  latest_install_date date;
+  latest_install_odometer numeric(12,1);
+  latest_install_quantity numeric(10,2);
 BEGIN
   SELECT event_type INTO latest_state_type
   FROM public.vehicle_component_history
@@ -255,7 +257,8 @@ BEGIN
   ORDER BY event_date DESC, created_at DESC, id DESC
   LIMIT 1;
 
-  SELECT event_date, odometer, quantity INTO latest_install
+  SELECT event_date, odometer, quantity
+  INTO latest_install_date, latest_install_odometer, latest_install_quantity
   FROM public.vehicle_component_history
   WHERE component_id = target_component_id
     AND event_type IN ('initial_installation','replacement')
@@ -263,9 +266,9 @@ BEGIN
   LIMIT 1;
 
   UPDATE public.vehicle_components
-  SET current_install_date = latest_install.event_date,
-      current_install_odometer = latest_install.odometer,
-      quantity = COALESCE(latest_install.quantity, quantity),
+  SET current_install_date = latest_install_date,
+      current_install_odometer = latest_install_odometer,
+      quantity = COALESCE(latest_install_quantity, quantity),
       is_active = CASE WHEN latest_state_type IS NULL THEN is_active ELSE latest_state_type <> 'removal' END,
       updated_at = now()
   WHERE id = target_component_id;
@@ -299,17 +302,19 @@ RETURNS void LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  latest_valuation record;
+  latest_valuation_value numeric(14,2);
+  latest_valuation_fipe_code text;
 BEGIN
-  SELECT value, fipe_code INTO latest_valuation
+  SELECT value, fipe_code
+  INTO latest_valuation_value, latest_valuation_fipe_code
   FROM public.vehicle_valuations
   WHERE vehicle_id = target_vehicle_id
   ORDER BY valuation_date DESC, created_at DESC, id DESC
   LIMIT 1;
 
   UPDATE public.vehicles
-  SET current_market_value = latest_valuation.value,
-      fipe_code = latest_valuation.fipe_code,
+  SET current_market_value = latest_valuation_value,
+      fipe_code = latest_valuation_fipe_code,
       updated_at = now()
   WHERE id = target_vehicle_id;
 END;
