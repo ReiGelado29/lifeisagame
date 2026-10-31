@@ -266,7 +266,7 @@ BEGIN
   SET current_install_date = latest_install.event_date,
       current_install_odometer = latest_install.odometer,
       quantity = COALESCE(latest_install.quantity, quantity),
-      is_active = (latest_state_type IS NOT NULL AND latest_state_type <> 'removal'),
+      is_active = CASE WHEN latest_state_type IS NULL THEN is_active ELSE latest_state_type <> 'removal' END,
       updated_at = now()
   WHERE id = target_component_id;
 END;
