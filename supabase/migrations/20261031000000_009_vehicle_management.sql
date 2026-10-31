@@ -221,7 +221,7 @@ FOR EACH ROW EXECUTE FUNCTION public.validate_vehicle_component_template();
 CREATE OR REPLACE FUNCTION public.sync_vehicle_component_history()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public
-AS $
+AS $$
 DECLARE
   affected_component_id uuid;
 BEGIN
@@ -238,12 +238,12 @@ BEGIN
   PERFORM public.recalculate_vehicle_component_state(NEW.component_id);
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE OR REPLACE FUNCTION public.recalculate_vehicle_component_state(target_component_id uuid)
 RETURNS void LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public
-AS $
+AS $$
 DECLARE
   latest_state_type text;
   latest_install record;
@@ -270,7 +270,7 @@ BEGIN
       updated_at = now()
   WHERE id = target_component_id;
 END;
-$;
+$$;
 
 CREATE TRIGGER sync_vehicle_component_history_trigger
 AFTER INSERT OR UPDATE OR DELETE ON public.vehicle_component_history
@@ -280,7 +280,7 @@ FOR EACH ROW EXECUTE FUNCTION public.sync_vehicle_component_history();
 CREATE OR REPLACE FUNCTION public.sync_vehicle_valuation()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public
-AS $
+AS $$
 BEGIN
   IF TG_OP = 'DELETE' THEN
     PERFORM public.recalculate_vehicle_valuation(OLD.vehicle_id);
@@ -292,12 +292,12 @@ BEGIN
   PERFORM public.recalculate_vehicle_valuation(NEW.vehicle_id);
   RETURN NEW;
 END;
-$;
+$$;
 
 CREATE OR REPLACE FUNCTION public.recalculate_vehicle_valuation(target_vehicle_id uuid)
 RETURNS void LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public
-AS $
+AS $$
 DECLARE
   latest_valuation record;
 BEGIN
@@ -313,7 +313,7 @@ BEGIN
       updated_at = now()
   WHERE id = target_vehicle_id;
 END;
-$;
+$$;
 
 CREATE TRIGGER sync_vehicle_valuation_trigger
 AFTER INSERT OR UPDATE OR DELETE ON public.vehicle_valuations
